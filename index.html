@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#FFE9A8">
+<title>🚜 Granja Geográfica CR · 4to grado</title>
+<style>
+:root{
+  --bg:#FFF8E8; --bg-soft:#FFFFFF; --surface:#FFFFFF; --line:rgba(74,46,29,.16);
+  --text:#3E2A1B; --text-dim:#8A6F58;
+  --wood:#8B5A2B; --wood-dark:#5C3A1E; --wood-light:#C98A4B;
+  --sky1:#FFE9A8; --sky2:#BFE6FF;
+  --good:#3F9142; --bad:#D1495B; --sun:#F4B400;
+  --c1:#4C9A4A; --c2:#2D8FBF; --c3:#E0A800; --c4:#A0522D; --c5:#7E57C2;
+  --c6:#00897B; --c7:#0097A7; --c8:#5C6BC0; --c9:#FF7043;
+  --radius:18px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  margin:0; background:linear-gradient(180deg,var(--sky1) 0%,var(--sky2) 220px,var(--bg) 420px);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.disp{ font-weight:800; letter-spacing:-0.01em; }
+.mono{ font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace; }
+button{ font-family:inherit; }
+:focus-visible{ outline:3px solid var(--sun); outline-offset:2px; border-radius:10px; }
+
+#app-frame{
+  max-width:480px; margin:0 auto; min-height:100dvh; position:relative;
+  background:transparent;
+  padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right);
+}
+@media (min-width:540px){
+  body{ background:linear-gradient(135deg,#EAD9B4,#D8C49A); }
+  #app-frame{
+    margin:20px auto; min-height:calc(100dvh - 40px); height:calc(100dvh - 40px);
+    border-radius:36px; overflow:hidden; box-shadow:0 30px 70px rgba(60,35,15,.35);
+    border:10px solid var(--wood-dark);
+    background:linear-gradient(180deg,var(--sky1) 0%,var(--sky2) 220px,var(--bg) 420px);
+  }
+}
+
+.view{ display:none; position:absolute; inset:0; overflow:hidden; }
+.view.active{ display:flex; flex-direction:column; }
+.view-scroll{ flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+
+/* ---------- Topbar (study/quiz) ---------- */
+.topbar{
+  position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:10px;
+  padding:14px 16px; padding-top:calc(14px + env(safe-area-inset-top));
+  background:rgba(255,248,232,.92); backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--line);
+}
+.iconbtn{
+  width:40px; height:40px; min-width:40px; border-radius:14px; border:2px solid var(--wood);
+  background:#fff; color:var(--wood-dark); font-size:18px; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; line-height:1;
+}
+.iconbtn:active{ transform:scale(.94); }
+.topbar-title{ font-weight:800; font-size:clamp(14px,4vw,16px); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+.segbar{ display:flex; gap:4px; padding:0 16px 10px; }
+.segbar i{ flex:1; height:6px; border-radius:4px; background:var(--line); }
+.segbar i.done{ background:var(--good); }
+.segbar i.now{ background:var(--sun); }
+
+.contbar-wrap{ padding:0 16px 10px; }
+.contbar{ height:8px; border-radius:6px; background:var(--line); overflow:hidden; }
+.contbar > div{ height:100%; background:linear-gradient(90deg,var(--c3),var(--good)); transition:width .35s ease; }
+.contbar-label{ font-size:12px; color:var(--text-dim); margin-top:4px; font-weight:700; }
+
+/* ---------- HOME ---------- */
+.home-hero{ padding:22px 18px 14px; text-align:center; }
+.home-sun{ font-size:30px; }
+.home-title{ font-size:clamp(22px,7vw,28px); margin:6px 0 2px; }
+.home-sub{ color:var(--text-dim); font-size:clamp(12.5px,3.6vw,14px); margin:0 0 8px; font-weight:600; }
+.exam-badge{
+  display:inline-flex; align-items:center; gap:6px; background:#fff; border:2px solid var(--wood);
+  border-radius:999px; padding:6px 14px; font-size:12.5px; font-weight:800; color:var(--wood-dark);
+  box-shadow:0 3px 0 var(--line);
+}
+.stats-row{ display:flex; gap:10px; padding:6px 16px 4px; }
+.stat-chip{
+  flex:1; background:#fff; border:2px solid var(--line); border-radius:16px; padding:10px 12px; text-align:center;
+}
+.stat-chip b{ display:block; font-size:clamp(18px,5.5vw,22px); }
+.stat-chip span{ font-size:11px; color:var(--text-dim); font-weight:700; }
+
+.parcelas-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:14px 16px 8px; }
+.parcela{
+  background:var(--surface); border-radius:var(--radius); border:2px solid var(--line); padding:14px 12px;
+  text-align:center; cursor:pointer; position:relative; box-shadow:0 4px 0 rgba(74,46,29,.08);
+}
+.parcela:active{ transform:translateY(2px); box-shadow:none; }
+.parcela .emoji{ font-size:28px; display:block; }
+.parcela .crop{ font-size:22px; display:block; margin-top:2px; }
+.parcela .name{ font-size:12.5px; font-weight:800; margin-top:6px; line-height:1.25; min-height:32px; display:flex; align-items:center; justify-content:center;}
+.parcela .soil{ height:7px; border-radius:5px; background:#E9DCC3; margin-top:8px; overflow:hidden; }
+.parcela .soil > div{ height:100%; border-radius:5px; transition:width .4s ease; }
+.parcela .pct{ font-size:11px; font-weight:800; margin-top:4px; color:var(--text-dim); }
+
+.full-quiz-cta{
+  margin:14px 16px 6px; display:block; width:calc(100% - 32px);
+  background:linear-gradient(180deg,#FFD24A,var(--sun)); border:2px solid #B07D00; border-radius:18px;
+  padding:16px; font-size:clamp(15px,4.4vw,17px); font-weight:800; color:#4A2E00;
+  box-shadow:0 5px 0 #B07D00; cursor:pointer;
+}
+.full-quiz-cta:active{ transform:translateY(3px); box-shadow:0 2px 0 #B07D00; }
+.hint-text{ text-align:center; color:var(--text-dim); font-size:12px; padding:0 24px 18px; font-weight:600; }
+
+/* ---------- Bottom nav ---------- */
+.bottom-nav{
+  position:absolute; left:0; right:0; bottom:0; display:flex; gap:8px; padding:10px 14px;
+  padding-bottom:calc(10px + env(safe-area-inset-bottom));
+  background:rgba(255,255,255,.94); backdrop-filter:blur(6px); border-top:2px solid var(--wood-light);
+}
+.nav-btn{
+  flex:1; background:transparent; border:none; border-radius:14px; padding:8px 4px; text-align:center;
+  font-size:11px; font-weight:800; color:var(--text-dim); cursor:pointer;
+}
+.nav-btn .ic{ font-size:20px; display:block; }
+.nav-btn.active{ color:var(--wood-dark); background:#FFF3D6; }
+.scrollarea-with-nav{ flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding-bottom:100px; }
+
+/* ---------- Modal (parcela detail) ---------- */
+.modal-backdrop{
+  position:absolute; inset:0; background:rgba(40,25,10,.45); display:none; align-items:flex-end; z-index:50;
+}
+.modal-backdrop.show{ display:flex; }
+.modal-sheet{
+  width:100%; background:#fff; border-radius:24px 24px 0 0; padding:20px 20px calc(20px + env(safe-area-inset-bottom));
+  max-height:82%; overflow-y:auto;
+}
+.modal-handle{ width:44px; height:5px; background:var(--line); border-radius:4px; margin:0 auto 14px; }
+.modal-emoji{ font-size:40px; text-align:center; }
+.modal-title{ text-align:center; font-size:18px; margin:6px 0 4px; }
+.modal-hab{ font-size:13px; color:var(--text-dim); text-align:center; line-height:1.45; margin-bottom:6px; font-weight:600; }
+.modal-cont{ font-size:13px; background:#FBF4E3; border-radius:12px; padding:10px 12px; line-height:1.5; margin-bottom:14px; }
+.modal-mastery{ text-align:center; margin-bottom:16px; }
+.modal-mastery .crop{ font-size:38px; }
+.modal-actions{ display:flex; flex-direction:column; gap:10px; }
+.modal-btn{
+  border-radius:16px; padding:14px; font-weight:800; font-size:15px; border:2px solid var(--line); cursor:pointer; background:#fff;
+}
+.modal-btn.primary{ background:var(--good); border-color:#2C6E2E; color:#fff; box-shadow:0 4px 0 #2C6E2E; }
+.modal-btn.secondary{ background:#fff; border-color:var(--wood); color:var(--wood-dark); box-shadow:0 4px 0 var(--line); }
+.modal-close{ text-align:center; margin-top:14px; }
+.modal-close button{ background:none; border:none; color:var(--text-dim); font-weight:700; font-size:13px; cursor:pointer; }
+
+/* ---------- Study cards ---------- */
+.study-scroll{ flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; scroll-snap-type:y mandatory; }
+.scard-wrap{ height:100%; min-height:100%; scroll-snap-align:start; display:flex; align-items:center; padding:14px 18px 24px; }
+.scard{
+  width:100%; background:#fff; border-radius:24px; border:2px solid var(--line); padding:22px 20px;
+  box-shadow:0 10px 0 rgba(74,46,29,.08);
+}
+.scard .badge{ display:inline-block; font-size:11px; font-weight:800; padding:4px 10px; border-radius:999px; margin-bottom:10px; }
+.scard.tipo-concepto .badge{ background:#E7F3E7; color:var(--good); }
+.scard.tipo-ejemplo .badge{ background:#FFF1D6; color:#B07D00; }
+.scard.tipo-trampa{ border-color:#F4C2C2; }
+.scard.tipo-trampa .badge{ background:#FCE4E4; color:var(--bad); }
+.scard.tipo-dato{ border-color:#D7CCF0; }
+.scard.tipo-dato .badge{ background:#EFE8FB; color:#6A4FB0; }
+.scard h3{ font-size:clamp(16px,5vw,19px); margin:0 0 10px; line-height:1.3; }
+.scard p, .scard-body{ font-size:clamp(14px,4vw,15.5px); line-height:1.62; margin:0; }
+.scard-body b{ color:var(--wood-dark); }
+
+.scard-portada{ text-align:center; }
+.scard-portada .pe{ font-size:54px; }
+.scard-portada h2{ font-size:clamp(19px,6vw,24px); margin:8px 0 14px; }
+.scard-portada .pblock{ text-align:left; background:#FBF4E3; border-radius:14px; padding:12px 14px; margin-top:10px; font-size:13.5px; line-height:1.5; }
+.scard-portada .pblock b{ display:block; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:#B07D00; margin-bottom:3px; }
+
+.swipe-hint{ position:absolute; left:0; right:0; bottom:8px; text-align:center; font-size:12px; color:var(--text-dim); padding:0 0 2px; font-weight:700; pointer-events:none; }
+@media (prefers-reduced-motion:no-preference){
+  .swipe-hint{ animation:bob 1.8s ease-in-out infinite; }
+}
+@keyframes bob{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(4px)} }
+
+.float-nav{ position:absolute; right:16px; bottom:96px; display:flex; flex-direction:column; gap:10px; z-index:15; }
+.float-nav button{
+  width:46px; height:46px; border-radius:50%; border:2px solid var(--wood); background:#fff; color:var(--wood-dark);
+  font-size:18px; box-shadow:0 4px 0 rgba(74,46,29,.15); cursor:pointer;
+}
+.float-nav button:disabled{ opacity:.35; cursor:default; box-shadow:none; }
+
+/* ---------- Quiz ---------- */
+.quiz-wrap{ padding:6px 18px 130px; }
+.quiz-meta{ display:flex; justify-content:space-between; font-size:12px; color:var(--text-dim); font-weight:800; margin:4px 0 10px; }
+.quiz-q{ font-size:clamp(17px,5.2vw,21px); font-weight:800; line-height:1.35; margin:6px 0 16px; }
+.quiz-opt{
+  display:block; width:100%; text-align:left; background:#fff; border:2px solid var(--line); border-radius:16px;
+  padding:14px 16px; margin-bottom:10px; font-size:14.5px; font-weight:700; min-height:44px; cursor:pointer; color:var(--text);
+}
+.quiz-opt .letter{
+  display:inline-flex; width:24px; height:24px; border-radius:50%; background:#F1E6CC; color:var(--wood-dark);
+  align-items:center; justify-content:center; font-size:12px; font-weight:800; margin-right:10px;
+}
+.quiz-opt.correct{ background:#E7F3E7; border-color:var(--good); color:#235C25; }
+.quiz-opt.wrong{ background:#FCE4E4; border-color:var(--bad); color:#7E2433; }
+.quiz-opt.dim{ opacity:.55; }
+
+.attempt-note{ font-size:12.5px; font-weight:800; color:#B07D00; margin:-2px 0 12px; }
+.feedback{ border-radius:16px; padding:14px 16px; margin:10px 0; font-size:14px; line-height:1.5; }
+.feedback.ok{ background:#E7F3E7; border:2px solid var(--good); color:#235C25; }
+.feedback.bad{ background:#FCE4E4; border:2px solid var(--bad); color:#7E2433; }
+.feedback b{ display:block; margin-bottom:4px; }
+.review-inline{ margin-top:12px; }
+.review-inline .scard{ box-shadow:none; }
+.next-btn{
+  width:100%; padding:14px; border-radius:16px; border:2px solid var(--wood); background:#fff; color:var(--wood-dark);
+  font-weight:800; font-size:15px; margin-top:6px; cursor:pointer; box-shadow:0 4px 0 var(--line);
+}
+.study-link-btn{
+  width:100%; padding:12px; border-radius:14px; border:2px dashed var(--wood); background:#FBF4E3; color:var(--wood-dark);
+  font-weight:800; font-size:13.5px; margin-top:8px; cursor:pointer;
+}
+
+/* ---------- Results ---------- */
+.results-wrap{ padding:18px 18px 110px; text-align:center; }
+.gauge-wrap{ margin:6px auto 6px; width:200px; }
+.gauge-label{ font-weight:800; font-size:14px; margin-top:-4px; }
+.results-sub{ color:var(--text-dim); font-size:13px; font-weight:700; margin-bottom:18px; }
+.breakdown{ text-align:left; margin:10px 0 20px; }
+.bd-row{ display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.bd-row .em{ font-size:16px; width:22px; }
+.bd-row .label{ font-size:12px; font-weight:700; width:108px; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bd-row .bar{ flex:1; height:9px; border-radius:6px; background:#E9DCC3; overflow:hidden; }
+.bd-row .bar > div{ height:100%; }
+.bd-row .pct{ font-size:11px; font-weight:800; width:34px; text-align:right; }
+.fail-list{ text-align:left; margin-top:10px; }
+.fail-item{ background:#fff; border:2px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:10px; font-size:13px; line-height:1.5; }
+.fail-item .fq{ font-weight:800; margin-bottom:4px; }
+.fail-item .fa{ color:var(--good); font-weight:700; }
+.results-actions{ display:flex; flex-direction:column; gap:10px; margin-top:18px; }
+.results-actions button{ padding:14px; border-radius:16px; font-weight:800; font-size:15px; cursor:pointer; }
+.btn-retry{ background:var(--sun); border:2px solid #B07D00; color:#4A2E00; box-shadow:0 4px 0 #B07D00; }
+.btn-home{ background:#fff; border:2px solid var(--wood); color:var(--wood-dark); box-shadow:0 4px 0 var(--line); }
+
+.empty-results{ padding:60px 30px 130px; text-align:center; color:var(--text-dim); }
+.empty-results .em{ font-size:46px; display:block; margin-bottom:10px; }
+
+@media (prefers-reduced-motion:reduce){
+  *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+}
+@media (max-width:374px){
+  .home-hero{ padding:16px 14px 10px; }
+  .parcelas-grid{ gap:9px; padding:10px 12px 6px; }
+  .scard{ padding:18px 16px; }
+}
+@media (max-height:560px){
+  .home-hero{ padding:10px 16px 6px; }
+  .swipe-hint{ display:none; }
+  .scard{ padding:16px 16px; }
+  .gauge-wrap{ width:150px; }
+}
+</style>
+</head>
+<body>
+<div id="app-frame">
+
+  <!-- ============ HOME ============ -->
+  <section id="view-home" class="view active">
+    <div class="scrollarea-with-nav">
+      <div class="home-hero">
+        <div class="home-sun">☀️🚜☁️</div>
+        <h1 class="home-title">Mi Granja de Estudios Sociales</h1>
+        <p class="home-sub">4to grado · Relieve y regiones de Costa Rica</p>
+        <div class="exam-badge" id="exam-badge">📅 Examen: jueves 25 de junio 2026</div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-chip"><b id="stat-parcelas">0/9</b><span>🧺 Parcelas cosechadas</span></div>
+        <div class="stat-chip"><b id="stat-nota">—</b><span>⭐ Nota promedio</span></div>
+      </div>
+      <div class="parcelas-grid" id="parcelas-grid"></div>
+      <button class="full-quiz-cta" id="btn-full-quiz">🌽 ¡Examen completo! (72 preguntas)</button>
+      <p class="hint-text">Tocá una parcela para estudiar o practicar ese tema 🐔</p>
+    </div>
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-nav="home"><span class="ic">🏠</span>Granja</button>
+      <button class="nav-btn" data-nav="results"><span class="ic">🧺</span>Última cosecha</button>
+    </nav>
+  </section>
+
+  <!-- ============ STUDY ============ -->
+  <section id="view-study" class="view">
+    <div class="topbar">
+      <button class="iconbtn" id="study-exit">✕</button>
+      <div class="topbar-title" id="study-title">Tema</div>
+    </div>
+    <div class="segbar" id="study-segbar"></div>
+    <div class="study-scroll" id="study-scroll"></div>
+    <div class="float-nav">
+      <button id="study-up" aria-label="Tarjeta anterior">↑</button>
+      <button id="study-down" aria-label="Tarjeta siguiente">↓</button>
+    </div>
+    <div class="swipe-hint">⬆️ Deslizá o usá las flechas ⬇️</div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section id="view-quiz" class="view">
+    <div class="topbar">
+      <button class="iconbtn" id="quiz-exit">✕</button>
+      <div class="topbar-title" id="quiz-title">Quiz</div>
+    </div>
+    <div class="view-scroll">
+      <div class="contbar-wrap">
+        <div class="contbar"><div id="quiz-bar" style="width:0%"></div></div>
+        <div class="contbar-label" id="quiz-label">Pregunta 1 de 72</div>
+      </div>
+      <div class="quiz-wrap" id="quiz-wrap"></div>
+    </div>
+  </section>
+
+  <!-- ============ RESULTS ============ -->
+  <section id="view-results" class="view">
+    <div class="topbar">
+      <button class="iconbtn" id="results-exit">✕</button>
+      <div class="topbar-title">🧺 Tu cosecha</div>
+    </div>
+    <div class="view-scroll" id="results-content-wrap"><div id="results-content"></div></div>
+    <nav class="bottom-nav">
+      <button class="nav-btn" data-nav="home"><span class="ic">🏠</span>Granja</button>
+      <button class="nav-btn active" data-nav="results"><span class="ic">🧺</span>Última cosecha</button>
+    </nav>
+  </section>
+
+  <!-- ============ MODAL ============ -->
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal-sheet" id="modal-sheet"></div>
+  </div>
+
+</div>
+
+<script>
+const DATA = {"TEMAS": [{"id": 1, "emoji": "🗺️", "nombre": "Formas de relieve", "crop": "🌳", "color": "#4C9A4A", "habilidad": "Identificación de las características básicas de las formas de relieve.", "contenido": "Cordilleras, valles, llanuras, ríos, montañas, volcanes y costas; su relación con el clima y las actividades de cada región."}, {"id": 2, "emoji": "🌊", "nombre": "Límites oceánicos y fases del relieve", "crop": "🌋", "color": "#2D8FBF", "habilidad": "Comprensión de las características básicas de las formas de relieve.", "contenido": "Los límites oceánicos de Costa Rica y las tres fases de formación del relieve nacional."}, {"id": 3, "emoji": "🌾", "nombre": "Llanuras de Costa Rica", "crop": "🌽", "color": "#E0A800", "habilidad": "Reconocimiento de la dinámica de las regiones socioeconómicas.", "contenido": "Ubicación, nombres y actividades humanas de las principales llanuras del país."}, {"id": 4, "emoji": "🐄", "nombre": "Mi región: Vázquez de Coronado", "crop": "🥛", "color": "#A0522D", "habilidad": "Reconocimiento de la dinámica de las regiones socioeconómicas donde habita el estudiante.", "contenido": "Ubicación, distritos y actividades económicas de la región donde vivís: ganadería, agricultura y ecoturismo."}, {"id": 5, "emoji": "⛰️", "nombre": "Las cuatro cordilleras", "crop": "🏔️", "color": "#7E57C2", "habilidad": "Reconocimiento de la dinámica de las regiones socioeconómicas.", "contenido": "Las cuatro cordilleras del sistema montañoso central: ubicación, nombres y características."}, {"id": 6, "emoji": "🏞️", "nombre": "Los valles de Costa Rica", "crop": "☕", "color": "#00897B", "habilidad": "Reconocimiento de la dinámica de las regiones socioeconómicas.", "contenido": "Los principales valles del territorio nacional: nombre, ubicación y característica distintiva."}, {"id": 7, "emoji": "💧", "nombre": "Los ríos: importancia y cuido", "crop": "🐟", "color": "#0097A7", "habilidad": "Reconocimiento de la dinámica de las regiones socioeconómicas.", "contenido": "Importancia y utilidad de los ríos para la sociedad costarricense y acciones para su conservación."}, {"id": 8, "emoji": "🌧️", "nombre": "Las vertientes de Costa Rica", "crop": "🌈", "color": "#5C6BC0", "habilidad": "Reconocimiento de la dinámica de las regiones socioeconómicas.", "contenido": "Características de las vertientes y los ríos principales de cada una."}, {"id": 9, "emoji": "🏖️", "nombre": "Las costas de Costa Rica", "crop": "🥥", "color": "#FF7043", "habilidad": "Reconocimiento de la dinámica de las regiones socioeconómicas.", "contenido": "Características y actividades económicas de las dos costas: Pacífico y Caribe."}], "STUDY": {"1": [{"tipo": "concepto", "titulo": "¿Qué es el relieve?", "texto": "El <b>relieve</b> es la forma que tiene la superficie de la tierra: alta, baja, plana o inclinada. Costa Rica tiene un relieve muy variado:<br>🏔️ <b>Cordillera</b> — cadena de montañas unidas.<br>🌋 <b>Volcán</b> — montaña con un cráter por donde puede salir lava.<br>🏞️ <b>Valle</b> — terreno bajo entre montañas, casi siempre fértil.<br>🌾 <b>Llanura</b> — terreno plano y extenso.<br>💧 <b>Río</b> — corriente de agua que va de la montaña al mar.<br>🏖️ <b>Costa</b> — franja de tierra junto al mar."}, {"tipo": "ejemplo", "titulo": "Ejemplo: una cordillera", "texto": "La <b>Cordillera de Talamanca</b> es la cadena de montañas más alta y extensa del país. Ahí está el Cerro Chirripó, el punto más alto de Costa Rica."}, {"tipo": "ejemplo", "titulo": "Ejemplo: un volcán", "texto": "El <b>Volcán Poás</b> y el <b>Volcán Arenal</b> son montañas con cráter. No todas las montañas tienen cráter — solo los volcanes."}, {"tipo": "ejemplo", "titulo": "Ejemplo: un valle", "texto": "El <b>Valle Central</b> es un terreno bajo rodeado de montañas. Ahí está San José, la capital de Costa Rica."}, {"tipo": "ejemplo", "titulo": "Ejemplo: una llanura", "texto": "La <b>Llanura de Guanacaste</b> (o del Tempisque) es un terreno plano y extenso, ideal para la ganadería."}, {"tipo": "ejemplo", "titulo": "Ejemplo: una costa", "texto": "Costa Rica tiene dos costas: la del <b>Pacífico</b> y la del <b>Caribe</b>, ambas franjas de tierra junto al mar."}, {"tipo": "concepto", "titulo": "Relieve, clima y actividades", "texto": "El relieve cambia el clima y el trabajo de la gente:<br>🥶 En zonas altas y frías como Talamanca: ganadería de leche y cultivo de hortalizas.<br>🌞 En llanuras cálidas como Guanacaste: ganadería y agricultura de riego.<br>🌊 En las costas: pesca y turismo."}, {"tipo": "trampa", "titulo": "🚩 ¡Ojo aquí!", "texto": "Un volcán es un <b>tipo</b> de montaña, pero no toda montaña es un volcán. Una cordillera está formada por varias montañas — algunas volcánicas y otras no."}, {"tipo": "dato", "titulo": "✨ Dato curioso", "texto": "Costa Rica tiene más de 200 puntos identificados como volcanes, ¡pero solo unos pocos están activos, como el Turrialba, el Rincón de la Vieja y el Poás!"}], "2": [{"tipo": "concepto", "titulo": "Dos mares, un país", "texto": "Costa Rica está entre dos masas de agua. Esos son sus <b>límites oceánicos</b>:<br>🌅 Al <b>oeste</b>: Océano <b>Pacífico</b>.<br>🌄 Al <b>este</b>: <b>Mar Caribe</b> (parte del océano Atlántico).<br>El territorio no siempre tuvo esta forma: se formó poco a poco en <b>tres fases</b>."}, {"tipo": "concepto", "titulo": "Los límites con detalle", "texto": "El Pacífico y el Caribe no solo limitan el país: también le dan sus dos costas y dividen el agua de los ríos en distintas vertientes."}, {"tipo": "ejemplo", "titulo": "Fase 1 — Nace la Cordillera de Talamanca", "texto": "Hace millones de años, el choque de las placas tectónicas (Coco y Caribe) levantó las primeras tierras firmes: la <b>Cordillera de Talamanca</b>. Es la más antigua y <b>no</b> es volcánica."}, {"tipo": "ejemplo", "titulo": "Fase 2 — Nacen las cordilleras volcánicas", "texto": "Después, la actividad de los volcanes formó las cordilleras de <b>Guanacaste, Tilarán y Central</b>, sumando tierra firme."}, {"tipo": "ejemplo", "titulo": "Fase 3 — Se forman valles y llanuras", "texto": "Los ríos arrastraron tierra, arena y piedras desde las montañas y las depositaron en zonas bajas, creando el <b>Valle Central</b> y llanuras como las del Caribe y Guanacaste."}, {"tipo": "trampa", "titulo": "🚩 ¡Ojo aquí!", "texto": "No confundás <b>límite oceánico</b> (la frontera del país con el mar) con <b>vertiente</b> (hacia dónde corren los ríos) — están relacionados, pero no son lo mismo."}, {"tipo": "dato", "titulo": "✨ Dato curioso", "texto": "En la Cordillera de Talamanca está el Cerro Chirripó, con 3,820 metros — ¡tan alto que a veces cae escarcha (hielo) en la madrugada!"}], "3": [{"tipo": "concepto", "titulo": "¿Qué es una llanura?", "texto": "Una <b>llanura</b> es un terreno plano y extenso, con pocas elevaciones. En Costa Rica están cerca de las costas y de los ríos grandes."}, {"tipo": "ejemplo", "titulo": "Llanura de Guanacaste (Tempisque)", "texto": "Al noroeste del país. Clima seco con una estación lluviosa marcada. Actividades: ganadería y agricultura de riego (caña, arroz, melón)."}, {"tipo": "ejemplo", "titulo": "Llanura de San Carlos", "texto": "Zona norte, clima lluvioso. Actividades: agricultura (piña, yuca, naranja) y ganadería de leche."}, {"tipo": "ejemplo", "titulo": "Llanura de Los Guatusos", "texto": "Extremo norte, frontera con Nicaragua. Agricultura y zonas protegidas como Caño Negro."}, {"tipo": "ejemplo", "titulo": "Llanuras del Caribe (Tortuguero)", "texto": "Costa Caribe norte, muy lluviosa todo el año. Plantaciones de banano y palma aceitera, y el Parque Nacional Tortuguero."}, {"tipo": "concepto", "titulo": "¿Por qué son buenas para la agricultura?", "texto": "Las llanuras son ideales para la agricultura mecanizada (con tractores) y la ganadería extensiva, porque el terreno plano facilita el trabajo."}, {"tipo": "ejemplo", "titulo": "Su impacto en el país", "texto": "Gracias a las llanuras del norte y del Caribe, Costa Rica exporta piña y banano a otros países. En Guanacaste la ganadería es tradicional desde hace generaciones."}, {"tipo": "trampa", "titulo": "🚩 ¡Ojo aquí!", "texto": "No todas las llanuras tienen el mismo clima: la de Guanacaste es seca y las del Caribe y San Carlos son lluviosas casi todo el año. El clima depende de la ubicación, no solo de ser plana."}, {"tipo": "dato", "titulo": "✨ Dato curioso", "texto": "Costa Rica es uno de los principales exportadores de piña del mundo, ¡y la mayoría se cultiva en las llanuras del norte, como San Carlos y Guatuso!"}], "4": [{"tipo": "concepto", "titulo": "Tu región: Vázquez de Coronado", "texto": "\"Coronado\" es un cantón de la provincia de <b>San José</b>, dentro de la <b>Región Central</b> de Costa Rica y del Gran Área Metropolitana (GAM). Es la región socioeconómica donde vivís."}, {"tipo": "ejemplo", "titulo": "Ubicación y distritos", "texto": "Coronado limita con Heredia, Moravia, Goicoechea, Cartago, Oreamuno y Pococí. Tiene 5 distritos: <b>San Isidro</b> (cabecera), San Rafael, Dulce Nombre de Jesús, Patalillo y Cascajal."}, {"tipo": "ejemplo", "titulo": "Ganadería y producción de leche", "texto": "En zonas rurales como San Rafael, Dulce Nombre de Jesús y Cascajal hay muchas fincas y haciendas ganaderas. Coronado tiene una larga tradición lechera."}, {"tipo": "ejemplo", "titulo": "Agricultura: café, hortalizas y flores", "texto": "En las partes altas se cultiva café, hortalizas y plantas ornamentales (flores) — Coronado también es conocida como tierra de flores."}, {"tipo": "ejemplo", "titulo": "Ecoturismo en Braulio Carrillo", "texto": "Cerca del 39% del territorio del cantón está cubierto por el <b>Parque Nacional Braulio Carrillo</b>, lo que atrae turismo de naturaleza y senderismo."}, {"tipo": "ejemplo", "titulo": "Comercio y servicios", "texto": "En el centro de San Isidro hay tiendas, bancos, supermercados y servicios para toda la zona."}, {"tipo": "concepto", "titulo": "Relieve y ríos de Coronado", "texto": "Por Coronado pasan ríos de las <b>dos vertientes</b>: hacia el Caribe nacen el Sucio, el Patria y el Zurquí (que forma el río Honduras); hacia el Pacífico corren el Virilla, el Tiribí y otros."}, {"tipo": "trampa", "titulo": "🚩 ¡Ojo aquí!", "texto": "Coronado pertenece a la provincia de San José, pero <b>no</b> es lo mismo que el cantón Central de San José (la capital) — son dos cantones distintos dentro de la misma provincia."}, {"tipo": "dato", "titulo": "✨ Dato curioso", "texto": "El Túnel del Zurquí, que conecta el Valle Central con la zona Caribe atravesando la Cordillera Central, pasa justo por Coronado — ¡millones de personas lo cruzan cada año!"}], "5": [{"tipo": "concepto", "titulo": "Las cuatro cordilleras", "texto": "El sistema montañoso central de Costa Rica está formado por <b>cuatro cordilleras</b> que atraviesan el país de noroeste a sureste, como una gran columna vertebral."}, {"tipo": "ejemplo", "titulo": "Cordillera de Guanacaste", "texto": "La más al norte. Volcanes Orosí, Rincón de la Vieja, Miravalles y Tenorio. Clima seco hacia el Pacífico."}, {"tipo": "ejemplo", "titulo": "Cordillera de Tilarán", "texto": "Entre Guanacaste y la Central. Volcán Arenal y la zona de Monteverde, famosa por sus bosques nubosos."}, {"tipo": "ejemplo", "titulo": "Cordillera Central", "texto": "La más cercana al Valle Central, donde vive la mayoría de la población. Volcanes Poás, Barva, Irazú y Turrialba."}, {"tipo": "ejemplo", "titulo": "Cordillera de Talamanca", "texto": "La más extensa y alta, de origen <b>no volcánico</b> (tectónico). Ahí está el Cerro Chirripó (3,820 m) y el Parque Internacional La Amistad."}, {"tipo": "concepto", "titulo": "Dirección y ubicación", "texto": "Las cuatro cordilleras van de noroeste a sureste, formando una especie de columna que divide el país en vertiente Pacífica y vertiente Caribe."}, {"tipo": "trampa", "titulo": "🚩 ¡Ojo aquí!", "texto": "Solo tres cordilleras (Guanacaste, Tilarán y Central) tienen volcanes. La de Talamanca es la única que NO se formó por volcanes, sino por el choque de placas tectónicas."}, {"tipo": "dato", "titulo": "✨ Dato curioso", "texto": "El volcán Poás tiene uno de los cráteres activos más grandes del mundo, ¡a veces se ve su laguna turquesa humeante desde el mirador!"}], "6": [{"tipo": "concepto", "titulo": "¿Qué es un valle?", "texto": "Un <b>valle</b> es un terreno bajo y alargado, rodeado de montañas. Costa Rica tiene dos valles principales."}, {"tipo": "ejemplo", "titulo": "Valle Central", "texto": "Está entre la Cordillera Central y la de Talamanca. Ahí están San José, Alajuela, Heredia y Cartago — donde vive la mayor parte de la población. Se divide en Valle Central <b>Occidental</b> (San José/Alajuela) y <b>Oriental</b> (Cartago). Es la zona cafetalera tradicional del país."}, {"tipo": "ejemplo", "titulo": "Valle de El General", "texto": "Está en la zona sur, cerca de Pérez Zeledón. Es más rural, con agricultura, café y ganadería, y menos población que el Valle Central."}, {"tipo": "trampa", "titulo": "🚩 ¡Ojo aquí!", "texto": "No confundás tamaño de población con tamaño de territorio: el Valle Central tiene MUCHA más población, pero el Valle de El General también es muy importante para la agricultura del sur del país."}, {"tipo": "dato", "titulo": "✨ Dato curioso", "texto": "En el Valle Central vive más de la mitad de la población de todo Costa Rica, ¡aunque ocupa solo una pequeña parte del territorio nacional!"}], "7": [{"tipo": "concepto", "titulo": "¿De dónde nacen los ríos?", "texto": "Los ríos nacen en las montañas, de la lluvia y los nacientes, y corren hacia el mar. Son fundamentales para la vida de las personas, los animales y las plantas."}, {"tipo": "ejemplo", "titulo": "Agua y riego", "texto": "Muchos acueductos toman agua de los ríos y sus nacientes. Los agricultores usan el agua de los ríos para regar sus cultivos."}, {"tipo": "ejemplo", "titulo": "Energía hidroeléctrica", "texto": "El ICE usa la fuerza del agua de ríos como el <b>Reventazón</b> para generar electricidad en represas hidroeléctricas."}, {"tipo": "ejemplo", "titulo": "Transporte y pesca", "texto": "En la zona Caribe, ríos como el Sarapiquí se usan para transportarse en bote y para pescar."}, {"tipo": "ejemplo", "titulo": "Turismo y rafting", "texto": "Ríos como el <b>Pacuare</b> y el Reventazón son famosos en el mundo para el rafting, un deporte de aventura."}, {"tipo": "concepto", "titulo": "Cómo cuidar los ríos", "texto": "Para conservar los ríos podemos: no botar basura ni químicos al agua, sembrar árboles en las riberas (orillas), ahorrar agua en casa, y denunciar la contaminación al MINAE."}, {"tipo": "trampa", "titulo": "🚩 ¡Ojo aquí!", "texto": "Un río \"caudaloso\" tiene mucha agua, pero eso no significa que esté limpio — puede tener mucho caudal y aun así estar contaminado si no se cuida."}, {"tipo": "dato", "titulo": "✨ Dato curioso", "texto": "El Río San Juan, en la frontera con Nicaragua, ¡ha sido motivo de discusiones entre los dos países sobre su uso y navegación!"}], "8": [{"tipo": "concepto", "titulo": "¿Qué es una vertiente?", "texto": "Una <b>vertiente</b> es la dirección hacia donde corren los ríos de una región, según el relieve. Las cordilleras dividen el agua: de un lado corre hacia el Pacífico, del otro hacia el Caribe."}, {"tipo": "ejemplo", "titulo": "Vertiente del Pacífico", "texto": "Más corta, con ríos importantes como el Grande de Tárcoles, el Tempisque y el Térraba. Tiene una estación seca marcada (verano) y otra lluviosa."}, {"tipo": "ejemplo", "titulo": "Vertiente del Caribe", "texto": "Sus ríos son más largos y caudalosos, como el Reventazón, el Sarapiquí, el Pacuare y el Sixaola. Llueve casi todo el año por los vientos húmedos del Caribe."}, {"tipo": "ejemplo", "titulo": "Vertiente del Norte", "texto": "Formada por ríos como el San Carlos y el Frío, que desembocan en el Río San Juan y el Lago de Nicaragua antes de llegar al Caribe."}, {"tipo": "trampa", "titulo": "🚩 ¡Ojo aquí!", "texto": "Vertiente NO es lo mismo que costa. La costa es la orilla junto al mar; la vertiente es hacia dónde corre el agua de los ríos, aunque esa zona no tenga playa (como el Valle Central)."}, {"tipo": "dato", "titulo": "✨ Dato curioso", "texto": "Aunque Costa Rica es un país pequeño, tiene más de 30 cuencas hidrográficas repartidas entre sus vertientes."}], "9": [{"tipo": "concepto", "titulo": "Dos costas, dos paisajes", "texto": "Costa Rica tiene dos costas: la del <b>Pacífico</b> y la del <b>Caribe</b>. Cada una tiene un paisaje, clima y actividades económicas distintas."}, {"tipo": "ejemplo", "titulo": "Costa Pacífica", "texto": "Es la más larga y de forma irregular, con golfos (Nicoya, Dulce) y penínsulas (Nicoya y Osa). Clima más seco en el norte (Guanacaste). Actividades: turismo de playa, pesca, agricultura (caña, melón) y el puerto de Caldera/Puntarenas."}, {"tipo": "ejemplo", "titulo": "Costa Caribe", "texto": "Más corta y recta, playas de arena oscura. Llueve casi todo el año. Actividades: agricultura de banano, piña y cacao, pesca, turismo ecológico (Tortuguero, Cahuita) y el puerto de Limón."}, {"tipo": "trampa", "titulo": "🚩 ¡Ojo aquí!", "texto": "No confundás \"más larga\" con \"más importante\": el Pacífico tiene más kilómetros de costa, pero las dos costas son económicamente importantes, cada una a su manera."}, {"tipo": "dato", "titulo": "✨ Dato curioso", "texto": "En el Parque Nacional Tortuguero, en la costa Caribe, llegan tortugas verdes a desovar cada año — ¡uno de los sitios más importantes del mundo para esta especie!"}]}, "QUIZ": [{"temaId": 1, "q": "¿Qué es una cordillera?", "opciones": ["Una cadena de montañas unidas", "Un terreno plano y extenso", "Una corriente de agua", "Una franja de tierra junto al mar"], "correcta": 0, "exp": "La cordillera es una cadena de montañas unidas; el valle es terreno bajo, la llanura es plana y la costa está junto al mar.", "ref": 0}, {"temaId": 1, "q": "¿Cuál de estas NO es una forma de relieve?", "opciones": ["Llanura", "Volcán", "Un supermercado", "Valle"], "correcta": 2, "exp": "El relieve son formas naturales de la superficie terrestre. Un supermercado es una construcción humana, no una forma de relieve.", "ref": 0}, {"temaId": 1, "q": "Sobre los volcanes y las montañas, ¿qué es correcto?", "opciones": ["Son exactamente lo mismo", "Un volcán es un tipo de montaña, pero no toda montaña es un volcán", "Una montaña es un tipo de volcán", "Ninguno de los dos es una montaña"], "correcta": 1, "exp": "Un volcán es una montaña con cráter, pero hay muchas montañas que no son volcanes.", "ref": 7}, {"temaId": 1, "q": "¿Cuál es un ejemplo de cordillera mencionado en el resumen?", "opciones": ["Cordillera de Talamanca", "Llanura de Tortuguero", "Valle de El General", "Golfo de Nicoya"], "correcta": 0, "exp": "La Cordillera de Talamanca es la más alta y extensa del país, con el Cerro Chirripó.", "ref": 1}, {"temaId": 1, "q": "¿Cuál es un ejemplo de llanura?", "opciones": ["Llanura de Guanacaste", "Cordillera Central", "Río Reventazón", "Cerro Chirripó"], "correcta": 0, "exp": "La Llanura de Guanacaste (o del Tempisque) es plana y extensa, ideal para la ganadería.", "ref": 4}, {"temaId": 1, "q": "El Valle Central es importante porque ahí está ubicada...", "opciones": ["La capital, San José", "La costa Caribe", "Un volcán activo", "Un río internacional"], "correcta": 0, "exp": "El Valle Central es un terreno bajo entre montañas donde se encuentra San José, la capital de Costa Rica.", "ref": 3}, {"temaId": 1, "q": "En zonas altas y frías como Talamanca, ¿qué actividades son típicas?", "opciones": ["Ganadería de leche y cultivo de hortalizas", "Pesca de altamar", "Cultivo de banano", "Turismo de playa"], "correcta": 0, "exp": "El relieve cambia el clima y el trabajo de la gente: en zonas altas y frías hay ganadería de leche y hortalizas.", "ref": 6}, {"temaId": 1, "q": "¿Cómo se llama la franja de tierra junto al mar?", "opciones": ["Cordillera", "Costa", "Valle", "Llanura"], "correcta": 1, "exp": "La costa es la franja de tierra que está junto al mar.", "ref": 0}, {"temaId": 2, "q": "¿Cuál es el límite oceánico al oeste de Costa Rica?", "opciones": ["Mar Caribe", "Océano Pacífico", "Océano Atlántico Norte", "Mar Mediterráneo"], "correcta": 1, "exp": "Al oeste de Costa Rica está el Océano Pacífico.", "ref": 1}, {"temaId": 2, "q": "¿Cuál es el límite oceánico al este de Costa Rica?", "opciones": ["Océano Pacífico", "Mar Caribe", "Golfo de México", "Río San Juan"], "correcta": 1, "exp": "Al este de Costa Rica está el Mar Caribe, que es parte del océano Atlántico.", "ref": 1}, {"temaId": 2, "q": "¿Cuál cordillera se formó PRIMERO, en la fase 1?", "opciones": ["Cordillera Central", "Cordillera de Talamanca", "Cordillera de Tilarán", "Cordillera de Guanacaste"], "correcta": 1, "exp": "La Cordillera de Talamanca fue la primera en formarse, por el choque de placas tectónicas.", "ref": 2}, {"temaId": 2, "q": "La Cordillera de Talamanca se formó por...", "opciones": ["Actividad volcánica", "El choque de placas tectónicas", "La erosión de los ríos", "El viento"], "correcta": 1, "exp": "A diferencia de las otras cordilleras, Talamanca se formó por el choque de las placas Coco y Caribe, no por volcanes.", "ref": 2}, {"temaId": 2, "q": "En la fase 2 de formación del relieve se formaron...", "opciones": ["Las llanuras", "Las cordilleras volcánicas: Guanacaste, Tilarán y Central", "Los valles", "Las costas"], "correcta": 1, "exp": "La fase 2 fue la formación de las cordilleras volcánicas por actividad de los volcanes.", "ref": 3}, {"temaId": 2, "q": "¿Qué se formó en la fase 3, por sedimentos arrastrados por los ríos?", "opciones": ["Los volcanes", "Valles y llanuras", "El Mar Caribe", "Las placas tectónicas"], "correcta": 1, "exp": "En la fase 3, los ríos arrastraron tierra y la depositaron en zonas bajas, creando valles y llanuras.", "ref": 4}, {"temaId": 2, "q": "¿Dónde está el punto más alto de Costa Rica?", "opciones": ["Volcán Poás, Cordillera Central", "Cerro Chirripó, Cordillera de Talamanca", "Volcán Arenal, Cordillera de Tilarán", "Volcán Irazú, Cordillera Central"], "correcta": 1, "exp": "El Cerro Chirripó, con 3,820 metros, está en la Cordillera de Talamanca.", "ref": 6}, {"temaId": 2, "q": "¿Vertiente y límite oceánico son lo mismo?", "opciones": ["Sí, siempre", "No, son conceptos relacionados pero distintos", "Vertiente es solo para ríos del Pacífico", "Límite oceánico es solo terrestre"], "correcta": 1, "exp": "El límite oceánico es la frontera con el mar; la vertiente es hacia dónde corren los ríos. Están relacionados, pero no son lo mismo.", "ref": 5}, {"temaId": 3, "q": "¿Cuál llanura está al noroeste y tiene clima seco?", "opciones": ["Llanura de San Carlos", "Llanura de Guanacaste", "Llanura de Tortuguero", "Llanura de Los Guatusos"], "correcta": 1, "exp": "La Llanura de Guanacaste (Tempisque) está al noroeste y tiene clima seco con una estación lluviosa marcada.", "ref": 1}, {"temaId": 3, "q": "¿Qué actividad es típica de la Llanura de Guanacaste?", "opciones": ["Ganadería y agricultura de riego", "Pesca de altura", "Minería", "Turismo de montaña"], "correcta": 0, "exp": "En la Llanura de Guanacaste se practica la ganadería y la agricultura de riego (caña, arroz, melón).", "ref": 1}, {"temaId": 3, "q": "¿Cuál llanura es conocida por la piña y la naranja?", "opciones": ["Llanura de San Carlos", "Llanura del Pacífico Sur", "Costa Caribe", "Valle de El General"], "correcta": 0, "exp": "La Llanura de San Carlos, en la zona norte, produce piña, yuca y naranja, además de ganadería de leche.", "ref": 2}, {"temaId": 3, "q": "¿Cuál llanura limita con Nicaragua y tiene la zona protegida de Caño Negro?", "opciones": ["Llanura de Los Guatusos", "Llanura de Tortuguero", "Llanura de Guanacaste", "Valle Central"], "correcta": 0, "exp": "La Llanura de Los Guatusos está en el extremo norte, fronteriza con Nicaragua, y tiene a Caño Negro.", "ref": 3}, {"temaId": 3, "q": "Las llanuras del Caribe norte (Tortuguero) se asocian con...", "opciones": ["Banano y palma aceitera", "Café y hortalizas", "Ganadería en zona seca", "Pesca del Pacífico"], "correcta": 0, "exp": "En las llanuras del Caribe norte hay plantaciones de banano y palma aceitera.", "ref": 4}, {"temaId": 3, "q": "¿Por qué las llanuras son buenas para la agricultura mecanizada?", "opciones": ["Por ser terreno plano, fácil para tractores", "Por tener montañas altas", "Por estar lejos de los ríos", "Por ser zonas muy frías"], "correcta": 0, "exp": "El terreno plano de las llanuras facilita el uso de tractores y maquinaria agrícola.", "ref": 5}, {"temaId": 3, "q": "¿Tienen todas las llanuras de Costa Rica el mismo clima?", "opciones": ["Sí, todas son secas", "No, depende de la ubicación: unas son secas y otras lluviosas", "Sí, todas son lluviosas", "El clima no depende de la ubicación"], "correcta": 1, "exp": "La de Guanacaste es seca y las del Caribe y San Carlos son lluviosas casi todo el año.", "ref": 7}, {"temaId": 3, "q": "Costa Rica es uno de los principales exportadores mundiales de...", "opciones": ["Trigo", "Piña, cultivada en llanuras del norte", "Algodón", "Arroz"], "correcta": 1, "exp": "La mayoría de la piña que exporta Costa Rica se cultiva en las llanuras del norte, como San Carlos y Guatuso.", "ref": 8}, {"temaId": 4, "q": "¿En qué provincia está el cantón de Vázquez de Coronado?", "opciones": ["Alajuela", "San José", "Heredia", "Cartago"], "correcta": 1, "exp": "Vázquez de Coronado pertenece a la provincia de San José.", "ref": 1}, {"temaId": 4, "q": "¿Cuál es el distrito cabecera del cantón de Coronado?", "opciones": ["San Rafael", "San Isidro", "Cascajal", "Patalillo"], "correcta": 1, "exp": "San Isidro es la cabecera (distrito principal) del cantón de Vázquez de Coronado.", "ref": 1}, {"temaId": 4, "q": "Coronado es conocido por su tradición en...", "opciones": ["Pesca de altura", "Ganadería y producción de leche", "Minería de oro", "Turismo de playa"], "correcta": 1, "exp": "Coronado tiene una larga tradición de ganadería y producción de leche, especialmente en sus zonas rurales.", "ref": 2}, {"temaId": 4, "q": "¿Qué parque nacional cubre buena parte de Coronado y da lugar al ecoturismo?", "opciones": ["Parque Nacional Tortuguero", "Parque Nacional Braulio Carrillo", "Parque Nacional Chirripó", "Parque Nacional Manuel Antonio"], "correcta": 1, "exp": "Cerca del 39% del territorio de Coronado está cubierto por el Parque Nacional Braulio Carrillo.", "ref": 4}, {"temaId": 4, "q": "Además de la ganadería, ¿qué se cultiva en las zonas altas de Coronado?", "opciones": ["Café, hortalizas y flores", "Banano y piña", "Caña de azúcar", "Arroz"], "correcta": 0, "exp": "En las partes altas de Coronado se cultivan café, hortalizas y plantas ornamentales (flores).", "ref": 3}, {"temaId": 4, "q": "¿Qué túnel conecta el Valle Central con la zona Caribe pasando por Coronado?", "opciones": ["Túnel del Zurquí", "Túnel de Talamanca", "Túnel de Cascajal", "Túnel del Chirripó"], "correcta": 0, "exp": "El Túnel del Zurquí atraviesa la Cordillera Central pasando por territorio de Coronado.", "ref": 8}, {"temaId": 4, "q": "¿A cuántas vertientes del país aporta agua el cantón de Coronado?", "opciones": ["Solo al Pacífico", "Solo al Caribe", "A las dos vertientes, Caribe y Pacífico", "A ninguna"], "correcta": 2, "exp": "Por Coronado nacen ríos que van hacia el Caribe (Sucio, Patria, Zurquí) y otros hacia el Pacífico (Virilla, Tiribí).", "ref": 6}, {"temaId": 4, "q": "¿Es Coronado lo mismo que el cantón Central de San José (la capital)?", "opciones": ["Sí, es el mismo cantón", "No, son cantones distintos dentro de la misma provincia", "Coronado está en Heredia", "Coronado es un país aparte"], "correcta": 1, "exp": "Coronado y el cantón Central de San José son dos cantones distintos, aunque ambos pertenecen a la provincia de San José.", "ref": 7}, {"temaId": 5, "q": "¿Cuántas cordilleras forman el sistema montañoso central de Costa Rica?", "opciones": ["2", "3", "4", "5"], "correcta": 2, "exp": "Son cuatro cordilleras: Guanacaste, Tilarán, Central y Talamanca.", "ref": 0}, {"temaId": 5, "q": "¿Cuál cordillera está ubicada más al norte del país?", "opciones": ["Cordillera Central", "Cordillera de Talamanca", "Cordillera de Guanacaste", "Cordillera de Tilarán"], "correcta": 2, "exp": "La Cordillera de Guanacaste es la más al norte, con volcanes como el Rincón de la Vieja.", "ref": 1}, {"temaId": 5, "q": "¿En qué cordillera está el volcán Arenal?", "opciones": ["Cordillera Central", "Cordillera de Tilarán", "Cordillera de Talamanca", "Cordillera de Guanacaste"], "correcta": 1, "exp": "El volcán Arenal pertenece a la Cordillera de Tilarán.", "ref": 2}, {"temaId": 5, "q": "¿Qué cordillera tiene los volcanes Poás, Barva, Irazú y Turrialba?", "opciones": ["Cordillera Central", "Cordillera de Talamanca", "Cordillera de Tilarán", "Cordillera de Guanacaste"], "correcta": 0, "exp": "La Cordillera Central tiene estos cuatro volcanes y está cerca del Valle Central.", "ref": 3}, {"temaId": 5, "q": "¿Cuál cordillera NO es volcánica y se formó por placas tectónicas?", "opciones": ["Cordillera de Guanacaste", "Cordillera de Talamanca", "Cordillera Central", "Cordillera de Tilarán"], "correcta": 1, "exp": "La Cordillera de Talamanca es la única de origen tectónico, no volcánico.", "ref": 6}, {"temaId": 5, "q": "¿En qué cordillera está el Cerro Chirripó?", "opciones": ["Cordillera de Guanacaste", "Cordillera de Talamanca", "Cordillera Central", "Cordillera de Tilarán"], "correcta": 1, "exp": "El Cerro Chirripó, el punto más alto del país, está en la Cordillera de Talamanca.", "ref": 4}, {"temaId": 5, "q": "La zona de Monteverde y sus bosques nubosos están cerca de...", "opciones": ["Cordillera de Tilarán", "Cordillera de Talamanca", "Cordillera Central", "Cordillera de Guanacaste"], "correcta": 0, "exp": "Monteverde está cerca de la Cordillera de Tilarán, junto al volcán Arenal.", "ref": 2}, {"temaId": 5, "q": "Las cuatro cordilleras de Costa Rica van en dirección...", "opciones": ["De norte a sur en línea recta", "De noroeste a sureste", "De este a oeste", "No tienen una dirección definida"], "correcta": 1, "exp": "Las cuatro cordilleras atraviesan el país de noroeste a sureste.", "ref": 5}, {"temaId": 6, "q": "¿Cuántos valles principales tiene Costa Rica?", "opciones": ["1", "2", "3", "4"], "correcta": 1, "exp": "Costa Rica tiene dos valles principales: el Valle Central y el Valle de El General.", "ref": 0}, {"temaId": 6, "q": "¿En qué valle está ubicada la capital, San José?", "opciones": ["Valle de El General", "Valle Central", "Valle de Coto Brus", "Valle del Pacífico"], "correcta": 1, "exp": "San José, la capital, está en el Valle Central.", "ref": 1}, {"temaId": 6, "q": "¿Cuál valle está en la zona sur, cerca de Pérez Zeledón?", "opciones": ["Valle Central", "Valle de El General", "Valle de Talamanca", "Valle de Guanacaste"], "correcta": 1, "exp": "El Valle de El General está en el sur del país, cerca de Pérez Zeledón.", "ref": 2}, {"temaId": 6, "q": "¿Qué provincias se ubican principalmente en el Valle Central?", "opciones": ["Limón y Puntarenas", "San José, Alajuela, Heredia y Cartago", "Solo Guanacaste", "Solo San José"], "correcta": 1, "exp": "El Valle Central abarca partes de San José, Alajuela, Heredia y Cartago.", "ref": 1}, {"temaId": 6, "q": "¿Cuál cultivo es tradicional del Valle Central?", "opciones": ["Banano", "Café", "Caña de azúcar", "Cacao"], "correcta": 1, "exp": "El café ha sido el cultivo tradicional del Valle Central desde hace generaciones.", "ref": 1}, {"temaId": 6, "q": "¿Cómo se divide el Valle Central?", "opciones": ["En Norte y Sur", "En Occidental y Oriental", "En Este y Oeste", "No se divide"], "correcta": 1, "exp": "Se divide en Valle Central Occidental (San José/Alajuela) y Oriental (Cartago).", "ref": 1}, {"temaId": 6, "q": "¿Cuál valle tiene MÁS población?", "opciones": ["Valle de El General", "Valle Central", "Ambos tienen la misma población", "Ninguno tiene población"], "correcta": 1, "exp": "En el Valle Central vive más de la mitad de la población de Costa Rica.", "ref": 4}, {"temaId": 6, "q": "El Valle de El General se caracteriza por ser...", "opciones": ["Muy urbano y pequeño", "Más rural, con agricultura y ganadería", "Una zona costera", "Un desierto"], "correcta": 1, "exp": "El Valle de El General es más rural que el Valle Central, con agricultura, café y ganadería.", "ref": 2}, {"temaId": 7, "q": "¿Para qué usa el ICE el agua de ríos como el Reventazón?", "opciones": ["Solo para riego", "Para generar electricidad (energía hidroeléctrica)", "Para hacer puentes", "Solo para criar peces"], "correcta": 1, "exp": "El ICE usa la fuerza del agua del Reventazón y otros ríos para generar electricidad en represas hidroeléctricas.", "ref": 2}, {"temaId": 7, "q": "¿Qué río es muy famoso para el rafting?", "opciones": ["Río Tempisque", "Río Pacuare", "Río Virilla", "Río Sucio"], "correcta": 1, "exp": "El Río Pacuare es famoso mundialmente para el rafting, un deporte de aventura.", "ref": 4}, {"temaId": 7, "q": "¿Cuál es una acción correcta para conservar los ríos?", "opciones": ["Botar basura en la orilla", "Sembrar árboles en las riberas", "Usar químicos sin control", "Desviar el agua sin permiso"], "correcta": 1, "exp": "Sembrar árboles en las riberas (orillas) ayuda a conservar los ríos y evita la erosión.", "ref": 5}, {"temaId": 7, "q": "¿Qué río se usa para transportarse en bote en la zona Caribe?", "opciones": ["Río Sarapiquí", "Río Tempisque", "Río Virilla", "Río Barranca"], "correcta": 0, "exp": "En la zona Caribe, ríos como el Sarapiquí se usan para transportarse en bote y pescar.", "ref": 3}, {"temaId": 7, "q": "¿De dónde nace generalmente un río?", "opciones": ["Del mar", "De las montañas, por la lluvia y los nacientes", "De las llanuras", "De los volcanes apagados"], "correcta": 1, "exp": "Los ríos nacen en las montañas, alimentados por la lluvia y los nacientes.", "ref": 0}, {"temaId": 7, "q": "¿Un río con mucho caudal está siempre limpio?", "opciones": ["Sí, siempre", "No, el caudal no garantiza que esté libre de contaminación", "Solo si es del Pacífico", "Solo si nace en un volcán"], "correcta": 1, "exp": "Un río puede tener mucha agua (caudal) y aun así estar contaminado si no se cuida.", "ref": 6}, {"temaId": 7, "q": "¿A qué institución se le debe denunciar si un río está contaminado?", "opciones": ["Al MINAE", "Solo al ICE", "A la escuela", "No se puede denunciar"], "correcta": 0, "exp": "El MINAE es la institución encargada de recibir denuncias por contaminación ambiental.", "ref": 5}, {"temaId": 7, "q": "¿Qué río en la frontera con Nicaragua ha sido tema de discusión entre los dos países?", "opciones": ["Río Reventazón", "Río San Juan", "Río Sixaola", "Río Térraba"], "correcta": 1, "exp": "El Río San Juan, en la frontera con Nicaragua, ha generado discusiones sobre su uso y navegación.", "ref": 7}, {"temaId": 8, "q": "¿Qué es una vertiente?", "opciones": ["Una franja de tierra junto al mar", "La dirección hacia donde corren los ríos de una región", "Una cadena de montañas", "Un tipo de volcán"], "correcta": 1, "exp": "Una vertiente es la dirección hacia donde corren los ríos de una región, según el relieve.", "ref": 0}, {"temaId": 8, "q": "¿Cuántas vertientes se estudian para Costa Rica en este resumen?", "opciones": ["1", "2", "3 (Pacífico, Caribe y Norte)", "5"], "correcta": 2, "exp": "Se estudian tres vertientes: la del Pacífico, la del Caribe y la del Norte.", "ref": 0}, {"temaId": 8, "q": "¿Cuál vertiente tiene los ríos más largos y caudalosos, como el Reventazón y el Sarapiquí?", "opciones": ["Vertiente del Pacífico", "Vertiente del Caribe", "Vertiente del Norte", "Ninguna"], "correcta": 1, "exp": "La vertiente del Caribe tiene los ríos más largos y caudalosos del país.", "ref": 2}, {"temaId": 8, "q": "¿Cuáles ríos pertenecen a la vertiente del Pacífico?", "opciones": ["Grande de Tárcoles, Tempisque y Térraba", "Reventazón y Pacuare", "San Carlos y Frío", "Sixaola y Sarapiquí"], "correcta": 0, "exp": "El Grande de Tárcoles, el Tempisque y el Térraba son ríos de la vertiente del Pacífico.", "ref": 1}, {"temaId": 8, "q": "¿Hacia dónde desembocan los ríos de la vertiente del Norte, como el San Carlos?", "opciones": ["Directo al Pacífico", "Al Río San Juan y el Lago de Nicaragua, antes del Caribe", "Al Golfo de Nicoya", "No desembocan en ningún lugar"], "correcta": 1, "exp": "Los ríos de la vertiente del Norte desembocan en el Río San Juan y el Lago de Nicaragua.", "ref": 3}, {"temaId": 8, "q": "¿Por qué la vertiente del Caribe es tan lluviosa?", "opciones": ["Por los volcanes activos", "Por recibir los vientos húmedos del Caribe casi todo el año", "Por estar muy alta", "Por no tener ríos"], "correcta": 1, "exp": "La vertiente del Caribe recibe los vientos húmedos del mar Caribe casi todo el año.", "ref": 2}, {"temaId": 8, "q": "¿Es lo mismo \"vertiente\" que \"costa\"?", "opciones": ["Sí, siempre", "No: la costa es la orilla del mar, la vertiente es hacia dónde corre el agua de los ríos", "Vertiente es solo para zonas sin mar", "Costa es solo para el Caribe"], "correcta": 1, "exp": "La costa es la orilla junto al mar; la vertiente es la dirección hacia donde corren los ríos.", "ref": 4}, {"temaId": 8, "q": "Según el dato curioso, ¿cuántas cuencas hidrográficas tiene Costa Rica aproximadamente?", "opciones": ["Menos de 5", "Más de 30", "Exactamente 10", "Más de 100"], "correcta": 1, "exp": "Costa Rica tiene más de 30 cuencas hidrográficas repartidas entre sus vertientes.", "ref": 5}, {"temaId": 9, "q": "¿Cuántas costas tiene Costa Rica?", "opciones": ["1", "2", "3", "4"], "correcta": 1, "exp": "Costa Rica tiene dos costas: la del Pacífico y la del Caribe.", "ref": 0}, {"temaId": 9, "q": "¿Cuál costa es más larga y tiene golfos como el de Nicoya?", "opciones": ["Costa Caribe", "Costa Pacífica", "Ambas son iguales", "Ninguna tiene golfos"], "correcta": 1, "exp": "La costa Pacífica es más larga y tiene golfos como el de Nicoya y el Dulce.", "ref": 1}, {"temaId": 9, "q": "¿Qué penínsulas se encuentran en la costa Pacífica?", "opciones": ["Nicoya y Osa", "Limón y Cahuita", "Sixaola y Tortuguero", "Talamanca y Coronado"], "correcta": 0, "exp": "Las penínsulas de Nicoya y de Osa están en la costa Pacífica.", "ref": 1}, {"temaId": 9, "q": "¿Cuál es el puerto principal de la costa Caribe?", "opciones": ["Puntarenas", "Limón", "Caldera", "Golfito"], "correcta": 1, "exp": "Limón es el puerto principal de la costa Caribe.", "ref": 2}, {"temaId": 9, "q": "¿Qué actividad económica es típica de la costa Caribe?", "opciones": ["Agricultura de banano, piña y cacao", "Ganadería de leche en zonas altas", "Cultivo de café", "Minería"], "correcta": 0, "exp": "En la costa Caribe se cultiva banano, piña y cacao.", "ref": 2}, {"temaId": 9, "q": "Según el dato curioso, ¿dónde llegan las tortugas verdes a desovar?", "opciones": ["Cahuita", "Parque Nacional Tortuguero", "Manuel Antonio", "Golfo Dulce"], "correcta": 1, "exp": "Las tortugas verdes llegan a desovar al Parque Nacional Tortuguero, en la costa Caribe.", "ref": 4}, {"temaId": 9, "q": "¿Cómo es el clima de la costa Caribe la mayor parte del año?", "opciones": ["Muy seco", "Lluvioso casi todo el año", "Nevado", "Sin lluvias nunca"], "correcta": 1, "exp": "La costa Caribe es lluviosa casi todo el año.", "ref": 2}, {"temaId": 9, "q": "¿Tener más kilómetros de costa significa ser más importante económicamente?", "opciones": ["Sí, siempre", "No, ambas costas son importantes cada una a su manera", "Solo el Caribe importa", "Solo el Pacífico importa"], "correcta": 1, "exp": "Aunque el Pacífico tiene más kilómetros de costa, ambas costas son económicamente importantes.", "ref": 3}]};
+const TEMAS = DATA.TEMAS, STUDY = DATA.STUDY, QUIZ = DATA.QUIZ;
+const temaById = {}; TEMAS.forEach(t=>temaById[t.id]=t);
+
+/* ---------- Global state ---------- */
+const state = {
+  attempts: {},
+  firstAnswer: {},
+  answered: {},
+  selected: {},
+  session: null,
+  lastSession: null,
+  studyTema: null,
+  studyIdx: 0,
+  modalTema: null,
+};
+
+/* ---------- Navigation ---------- */
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.nav===name));
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.nav-btn').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    const target = b.dataset.nav;
+    if(target==='results'){ renderResults(); }
+    if(target==='home'){ renderHome(); }
+    showView(target);
+  });
+});
+
+/* ================= HOME ================= */
+function masteryFor(temaId){
+  const qs = QUIZ.map((q,i)=>({q,i})).filter(x=>x.q.temaId===temaId);
+  let answeredCount=0, correctCount=0;
+  qs.forEach(x=>{ if(state.firstAnswer.hasOwnProperty(x.i)){ answeredCount++; if(state.firstAnswer[x.i]) correctCount++; } });
+  return { total: qs.length, answered: answeredCount, correct: correctCount,
+           pct: answeredCount ? Math.round(correctCount/answeredCount*100) : 0,
+           progress: Math.round(answeredCount/qs.length*100) };
+}
+function cropStage(mastery, fallbackCrop){
+  if(mastery.answered===0) return {emoji:'🌱', label:'Sin sembrar'};
+  if(mastery.answered<mastery.total) return {emoji:'🌿', label:'Creciendo'};
+  if(mastery.pct<70) return {emoji:'🌿', label:'Casi lista'};
+  return {emoji:fallbackCrop, label:'¡Cosechada!'};
+}
+function renderHome(){
+  let cosechadas=0, totalAnswered=0, totalCorrect=0;
+  const grid = document.getElementById('parcelas-grid');
+  grid.innerHTML='';
+  TEMAS.forEach(t=>{
+    const m = masteryFor(t.id);
+    if(m.pct>=70 && m.answered===m.total) cosechadas++;
+    totalAnswered+=m.answered; totalCorrect+=m.correct;
+    const stage = cropStage(m, t.crop);
+    const div = document.createElement('div');
+    div.className='parcela';
+    div.innerHTML = `
+      <span class="emoji">${t.emoji}</span>
+      <span class="crop">${stage.emoji}</span>
+      <span class="name">${t.nombre}</span>
+      <div class="soil"><div style="width:${m.progress}%;background:${t.color}"></div></div>
+      <div class="pct">${m.answered}/${m.total} · ${stage.label}</div>
+    `;
+    div.addEventListener('click', ()=>openModal(t.id));
+    grid.appendChild(div);
+  });
+  document.getElementById('stat-parcelas').textContent = cosechadas+'/9';
+  document.getElementById('stat-nota').textContent = totalAnswered ? Math.round(totalCorrect/totalAnswered*100) : '—';
+
+  const examDate = new Date('2026-06-25T07:00:00-06:00');
+  const now = new Date();
+  const diffDays = Math.ceil((examDate-now)/86400000);
+  const badge = document.getElementById('exam-badge');
+  if(diffDays>1) badge.textContent = `📅 Faltan ${diffDays} días · jueves 25 de junio`;
+  else if(diffDays===1) badge.textContent = `📅 ¡El examen es mañana!`;
+  else if(diffDays===0) badge.textContent = `📅 ¡El examen es hoy! 💪`;
+  else badge.textContent = `📅 Examen: jueves 25 de junio 2026`;
+}
+document.getElementById('btn-full-quiz').addEventListener('click', ()=>startQuiz(null));
+
+/* ================= MODAL ================= */
+function openModal(temaId){
+  state.modalTema = temaId;
+  const t = temaById[temaId];
+  const m = masteryFor(temaId);
+  const stage = cropStage(m, t.crop);
+  const sheet = document.getElementById('modal-sheet');
+  sheet.innerHTML = `
+    <div class="modal-handle"></div>
+    <div class="modal-emoji">${t.emoji}</div>
+    <h3 class="modal-title">${t.nombre}</h3>
+    <p class="modal-hab">${t.habilidad}</p>
+    <div class="modal-cont"><b>Contenido</b>${t.contenido}</div>
+    <div class="modal-mastery">
+      <div class="crop">${stage.emoji}</div>
+      <div class="pct">${m.answered}/${m.total} preguntas · ${m.answered? m.pct+'% de aciertos':'todavía no practicás'}</div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn primary" id="modal-study">📖 Estudiar este tema</button>
+      <button class="modal-btn secondary" id="modal-quiz">🌽 Practicar (8 preguntas)</button>
+    </div>
+    <div class="modal-close"><button id="modal-close">Cerrar</button></div>
+  `;
+  document.getElementById('modal-backdrop').classList.add('show');
+  document.getElementById('modal-study').onclick = ()=>{ closeModal(); startStudy(temaId); };
+  document.getElementById('modal-quiz').onclick = ()=>{ closeModal(); startQuiz(temaId); };
+  document.getElementById('modal-close').onclick = closeModal;
+}
+function closeModal(){ document.getElementById('modal-backdrop').classList.remove('show'); }
+document.getElementById('modal-backdrop').addEventListener('click', e=>{ if(e.target.id==='modal-backdrop') closeModal(); });
+
+/* ================= STUDY ================= */
+function badgeLabel(tipo){
+  return {concepto:'💡 Concepto', ejemplo:'📍 Ejemplo', trampa:'🚩 Trampa de examen', dato:'✨ Dato curioso'}[tipo] || tipo;
+}
+function startStudy(temaId){
+  state.studyTema = temaId; state.studyIdx = 0;
+  const t = temaById[temaId];
+  document.getElementById('study-title').textContent = t.emoji+' '+t.nombre;
+  const cards = STUDY[temaId];
+  const total = cards.length+2; // portada + cards + cierre
+
+  const seg = document.getElementById('study-segbar');
+  seg.innerHTML='';
+  for(let i=0;i<total;i++){ const s=document.createElement('i'); s.dataset.idx=i; seg.appendChild(s); }
+
+  const scroll = document.getElementById('study-scroll');
+  let html = `<div class="scard-wrap" data-i="0"><div class="scard scard-portada">
+      <div class="pe">${t.emoji}</div><h2>${t.nombre}</h2>
+      <div class="pblock"><b>Aprendizaje esperado</b>${t.habilidad}</div>
+      <div class="pblock"><b>Contenido</b>${t.contenido}</div>
+    </div></div>`;
+  cards.forEach((c,i)=>{
+    html += `<div class="scard-wrap" data-i="${i+1}"><div class="scard tipo-${c.tipo}">
+        <span class="badge">${badgeLabel(c.tipo)}</span>
+        <h3>${c.titulo}</h3>
+        <div class="scard-body">${c.texto}</div>
+      </div></div>`;
+  });
+  html += `<div class="scard-wrap" data-i="${total-1}"><div class="scard" style="text-align:center;">
+      <div class="pe">${t.crop}</div><h3>¡Ya estudiaste toda la parcela!</h3>
+      <p style="margin-bottom:16px;">Probá lo que aprendiste con el quiz de este tema.</p>
+      <button class="modal-btn primary" id="study-to-quiz" style="width:100%;">🌽 Hacer el quiz de este tema</button>
+    </div></div>`;
+  scroll.innerHTML = html;
+  document.getElementById('study-to-quiz').addEventListener('click', ()=>startQuiz(temaId));
+  showView('study');
+  scroll.scrollTop = 0;
+  updateStudySeg(0);
+  scroll.onscroll = ()=>{
+    const idx = Math.round(scroll.scrollTop/scroll.clientHeight);
+    updateStudySeg(idx);
+  };
+}
+function updateStudySeg(idx){
+  document.querySelectorAll('#study-segbar i').forEach(s=>{
+    const i = parseInt(s.dataset.idx);
+    s.classList.toggle('done', i<idx);
+    s.classList.toggle('now', i===idx);
+  });
+  document.getElementById('study-up').disabled = idx<=0;
+  const scroll = document.getElementById('study-scroll');
+  const max = scroll.children.length-1;
+  document.getElementById('study-down').disabled = idx>=max;
+  state.studyIdx = idx;
+}
+function studyGo(delta){
+  const scroll = document.getElementById('study-scroll');
+  const max = scroll.children.length-1;
+  let target = Math.max(0, Math.min(max, state.studyIdx+delta));
+  scroll.scrollTo({top: target*scroll.clientHeight, behavior:'smooth'});
+  updateStudySeg(target);
+}
+document.getElementById('study-up').addEventListener('click', ()=>studyGo(-1));
+document.getElementById('study-down').addEventListener('click', ()=>studyGo(1));
+document.getElementById('study-exit').addEventListener('click', ()=>{ renderHome(); showView('home'); });
+document.addEventListener('keydown', e=>{
+  if(!document.getElementById('view-study').classList.contains('active')) return;
+  if(['ArrowDown','PageDown'].includes(e.key)){ e.preventDefault(); studyGo(1); }
+  if(['ArrowUp','PageUp'].includes(e.key)){ e.preventDefault(); studyGo(-1); }
+});
+
+/* ================= QUIZ ================= */
+function startQuiz(temaId){
+  let ids;
+  if(temaId===null){
+    ids = QUIZ.map((q,i)=>i);
+  } else {
+    ids = QUIZ.map((q,i)=>i).filter(i=>QUIZ[i].temaId===temaId);
+  }
+  state.session = { ids, pos:0, temaId };
+  document.getElementById('quiz-title').textContent = temaId===null ? '🌽 Examen completo' : (temaById[temaId].emoji+' '+temaById[temaId].nombre);
+  showView('quiz');
+  renderQuizQuestion();
+}
+function letterFor(i){ return ['A','B','C','D'][i]; }
+function nextBtnLabel(){
+  return (state.session.pos+1<state.session.ids.length) ? 'Siguiente pregunta →' : 'Ver mi cosecha 🧺';
+}
+function renderQuizQuestion(){
+  const s = state.session;
+  const qi = s.ids[s.pos];
+  const q = QUIZ[qi];
+  const t = temaById[q.temaId];
+  // esta pregunta arranca fresca en esta sesión, sin importar si ya se respondió por otra vía antes
+  delete state.attempts[qi]; delete state.firstAnswer[qi]; delete state.answered[qi]; delete state.selected[qi];
+  document.getElementById('quiz-bar').style.width = Math.round((s.pos)/s.ids.length*100)+'%';
+  document.getElementById('quiz-label').textContent = `Pregunta ${s.pos+1} de ${s.ids.length}`;
+  state.attempts[qi]=0;
+
+  const wrap = document.getElementById('quiz-wrap');
+  const letters=['A','B','C','D'];
+  let optsHTML = q.opciones.map((op,i)=>`<button class="quiz-opt" data-i="${i}"><span class="letter">${letters[i]}</span>${op}</button>`).join('');
+  wrap.innerHTML = `
+    <div class="quiz-meta"><span>${t.emoji} ${t.nombre}</span><span id="attempt-counter">Intento ${state.attempts[qi]+1} de 4</span></div>
+    <div class="quiz-q">${q.q}</div>
+    <div id="quiz-opts">${optsHTML}</div>
+    <div id="quiz-feedback"></div>
+  `;
+  document.querySelectorAll('.quiz-opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>handleAnswer(qi, parseInt(btn.dataset.i)));
+  });
+}
+function handleAnswer(qi, choice){
+  if(state.answered[qi]) return;
+  const q = QUIZ[qi];
+  state.attempts[qi] = (state.attempts[qi]||0)+1;
+  state.selected[qi] = choice;
+  if(!state.firstAnswer.hasOwnProperty(qi)){
+    state.firstAnswer[qi] = (choice===q.correcta);
+  }
+  const correct = choice===q.correcta;
+  const opts = document.querySelectorAll('.quiz-opt');
+
+  if(correct){
+    state.answered[qi]=true;
+    opts.forEach((btn,i)=>{ btn.disabled=true; if(i===q.correcta) btn.classList.add('correct'); else btn.classList.add('dim'); });
+    document.getElementById('quiz-feedback').innerHTML = `
+      <div class="feedback ok"><b>✅ ¡Correcto!</b>${q.exp}</div>
+      <button class="next-btn" id="btn-next">${nextBtnLabel()}</button>`;
+    document.getElementById('btn-next').addEventListener('click', advanceQuiz);
+    return;
+  }
+  opts[choice].classList.add('wrong');
+  const att = state.attempts[qi];
+  if(att<3){
+    document.getElementById('attempt-counter').textContent = `Intento ${att+1} de 4`;
+    document.getElementById('quiz-feedback').innerHTML = `<div class="attempt-note">❌ No es esa. Te quedan ${4-att} intentos — ¡seguí intentando!</div>`;
+  } else if(att===3){
+    const card = STUDY[q.temaId][q.ref];
+    document.getElementById('attempt-counter').textContent = `Intento 4 de 4`;
+    document.getElementById('quiz-feedback').innerHTML = `
+      <div class="attempt-note">❌ Casi... repasemos este concepto antes de tu último intento:</div>
+      <div class="review-inline"><div class="scard tipo-${card.tipo}">
+        <span class="badge">${badgeLabel(card.tipo)}</span><h3>${card.titulo}</h3><div class="scard-body">${card.texto}</div>
+      </div></div>
+      <button class="study-link-btn" id="btn-study-link">📖 Ir a estudiar este tema completo</button>
+    `;
+    document.getElementById('btn-study-link').addEventListener('click', ()=>startStudy(q.temaId));
+  } else {
+    state.answered[qi]=true;
+    opts.forEach((btn,i)=>{ btn.disabled=true; if(i===q.correcta) btn.classList.add('correct'); else if(i===choice) btn.classList.add('wrong'); else btn.classList.add('dim'); });
+    document.getElementById('quiz-feedback').innerHTML = `
+      <div class="feedback bad"><b>📘 La respuesta correcta era: ${letterFor(q.correcta)}) ${q.opciones[q.correcta]}</b>${q.exp}</div>
+      <button class="next-btn" id="btn-next">${nextBtnLabel()}</button>`;
+    document.getElementById('btn-next').addEventListener('click', advanceQuiz);
+  }
+}
+function advanceQuiz(){
+  const s = state.session;
+  if(s.pos+1 < s.ids.length){
+    s.pos++;
+    renderQuizQuestion();
+  } else {
+    state.lastSession = { ids:[...s.ids], temaId: s.temaId };
+    renderResults();
+    showView('results');
+  }
+}
+document.getElementById('quiz-exit').addEventListener('click', ()=>{
+  if(confirm('¿Salir del quiz? Perdés el progreso de esta sesión.')){
+    renderHome(); showView('home');
+  }
+});
+
+/* ================= RESULTS ================= */
+function renderResults(){
+  const content = document.getElementById('results-content');
+  const sess = state.lastSession;
+  if(!sess){
+    content.innerHTML = `<div class="empty-results"><span class="em">🌱</span>Todavía no cosechaste nada.<br>¡Hacé un quiz para ver tu cosecha aquí!</div>`;
+    return;
+  }
+  const ids = sess.ids;
+  const total = ids.length;
+  const correct = ids.filter(i=>state.firstAnswer[i]).length;
+  const nota = Math.round(correct/total*100);
+  let label, color;
+  if(nota>=90){label='🌟 ¡Excelente cosecha!'; color='#3F9142';}
+  else if(nota>=70){label='✅ Aprobado, ¡bien hecho!'; color='#3F9142';}
+  else if(nota>=50){label='🌿 Regular, seguí practicando'; color='#C98A00';}
+  else {label='🚜 A repasar, ¡vos podés!'; color='#D1495B';}
+
+  const r=80,c=2*Math.PI*r, off = c - (nota/100)*c;
+  const gaugeSVG = `<svg width="200" height="200" viewBox="0 0 200 200">
+    <circle cx="100" cy="100" r="${r}" fill="none" stroke="#E9DCC3" stroke-width="16"/>
+    <circle cx="100" cy="100" r="${r}" fill="none" stroke="${color}" stroke-width="16" stroke-linecap="round"
+      stroke-dasharray="${c}" stroke-dashoffset="${c}" transform="rotate(-90 100 100)">
+      <animate attributeName="stroke-dashoffset" from="${c}" to="${off}" dur="1.1s" fill="freeze"/>
+    </circle>
+    <text x="100" y="96" text-anchor="middle" font-weight="800" font-size="40" fill="#3E2A1B">${nota}</text>
+    <text x="100" y="120" text-anchor="middle" font-size="13" fill="#8A6F58" font-weight="700">/ 100</text>
+  </svg>`;
+
+  let breakdownHTML='';
+  const uniqueTemas = [...new Set(ids.map(i=>QUIZ[i].temaId))];
+  if(uniqueTemas.length>1){
+    breakdownHTML = '<div class="breakdown">'+uniqueTemas.map(tid=>{
+      const t = temaById[tid];
+      const tqs = ids.filter(i=>QUIZ[i].temaId===tid);
+      const tcorrect = tqs.filter(i=>state.firstAnswer[i]).length;
+      const pct = Math.round(tcorrect/tqs.length*100);
+      return `<div class="bd-row"><span class="em">${t.emoji}</span><span class="label">${t.nombre}</span>
+        <span class="bar"><div style="width:${pct}%;background:${t.color}"></div></span><span class="pct">${pct}%</span></div>`;
+    }).join('')+'</div>';
+  }
+
+  const failed = ids.filter(i=>!state.firstAnswer[i]);
+  let failHTML='';
+  if(failed.length){
+    failHTML = `<h3 style="text-align:left;font-size:15px;margin:18px 0 8px;">📝 Para repasar</h3><div class="fail-list">`+
+      failed.map(i=>{
+        const q=QUIZ[i];
+        return `<div class="fail-item"><div class="fq">${q.q}</div><div class="fa">✅ ${q.opciones[q.correcta]}</div><div>${q.exp}</div></div>`;
+      }).join('')+`</div>`;
+  } else {
+    failHTML = `<div class="feedback ok" style="text-align:left;">🎉 ¡Respondiste todas correctamente en el primer intento!</div>`;
+  }
+
+  content.innerHTML = `
+    <div class="results-wrap">
+      <div class="gauge-wrap">${gaugeSVG}</div>
+      <div class="gauge-label" style="color:${color}">${label}</div>
+      <div class="results-sub">${correct} de ${total} correctas en el primer intento</div>
+      ${breakdownHTML}
+      ${failHTML}
+      <div class="results-actions">
+        <button class="btn-retry" id="btn-retry">🔄 Repetir este examen</button>
+        <button class="btn-home" id="btn-results-home">🏠 Volver a la granja</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('btn-retry').addEventListener('click', ()=>{
+    ids.forEach(i=>{ delete state.attempts[i]; delete state.firstAnswer[i]; delete state.answered[i]; delete state.selected[i]; });
+    startQuiz(sess.temaId);
+  });
+  document.getElementById('btn-results-home').addEventListener('click', ()=>{ renderHome(); showView('home'); });
+}
+document.getElementById('results-exit').addEventListener('click', ()=>{ renderHome(); showView('home'); });
+
+/* ---------- init ---------- */
+renderHome();
+</script>
+</body>
+</html>
