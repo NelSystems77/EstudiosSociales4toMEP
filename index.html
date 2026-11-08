@@ -2,754 +2,714 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Misión Regiones CR · Base Espacial 4°</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aventura Sociales 4.° · Práctica de la Segunda Prueba</title>
+<meta name="description" content="Práctica interactiva de Estudios Sociales para 4.° grado: derechos y deberes, independencia, clima, cambio climático y encuentro de culturas.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --space-deep:#080B1F;
-    --space-panel:#10142E;
-    --nebula-1:#2D1B69;
-    --nebula-2:#5C2A6E;
-    --flame:#FF6B4A;
-    --flame-2:#FFB84A;
-    --gold:#FBBF24;
-    --mint:#4ADE80;
-    --rose:#FB7185;
-    --ink:#F4F3FF;
-    --ink-dim:#A9A6D9;
-    --ink-faint:#6E6B9E;
-    --line:rgba(255,255,255,0.09);
-    --panel-glass:rgba(255,255,255,0.045);
-    --radius:18px;
-    --font-display:'Baloo 2', system-ui, sans-serif;
-    --font-hud:'Space Grotesk', system-ui, sans-serif;
-    --font-body:'Inter', system-ui, sans-serif;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:var(--space-deep);
-    color:var(--ink);
-    font-family:var(--font-body);
-    -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
-    min-height:100vh;
-  }
-  /* ---------- starfield ---------- */
-  #starfield{position:fixed;inset:0;z-index:0;overflow:hidden;background:
-      radial-gradient(ellipse at 20% -10%, rgba(93,45,120,0.55), transparent 55%),
-      radial-gradient(ellipse at 90% 10%, rgba(255,107,74,0.10), transparent 45%),
-      radial-gradient(ellipse at 50% 100%, rgba(45,27,105,0.6), transparent 60%),
-      var(--space-deep);}
-  .star{position:absolute;background:#fff;border-radius:50%;opacity:.7;animation:twinkle 4s ease-in-out infinite;}
-  @keyframes twinkle{0%,100%{opacity:.15;}50%{opacity:.9;}}
-  @keyframes drift{from{transform:translateY(0);}to{transform:translateY(-40px);}}
+/* ===== Paleta con psicología del color =====
+   Azul cielo  = calma y concentración      Verde menta = crecimiento, descansa la vista
+   Mantequilla = optimismo y energía        Durazno     = corrección amable (sin rojo alarmante)
+   Lavanda     = creatividad                Tinta azul oscuro = lectura cómoda y contraste alto */
+:root{
+  --ink:#24395a; --ink-soft:#4a6080;
+  --sky:#bfe7fb; --sky-2:#e6f6ff; --cream:#fffaf0; --white:#fff;
+  --grass:#b7e5a1; --grass-d:#6fbf73;
+  --blue:#2a74b8; --blue-d:#1d5a94;
+  --mint:#d8f4e2; --mint-d:#17623f;
+  --peach:#ffe6d0; --peach-d:#8a3f0e;
+  --butter:#fff0b8; --butter-d:#6b5200;
+  --lav:#e9dffc; --lav-d:#4b3a8a;
+  --shadow:0 6px 0 rgba(36,57,90,.12), 0 10px 24px rgba(36,57,90,.10);
+  --r:22px; --fs:1;
+}
+*{box-sizing:border-box}
+html{font-size:calc(17px * var(--fs));scroll-behavior:smooth}
+body{margin:0;font-family:"Nunito","Trebuchet MS",system-ui,sans-serif;color:var(--ink);line-height:1.55;
+  background:
+   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23ffffff' fill-opacity='.55'%3E%3Ccircle cx='30' cy='34' r='5'/%3E%3Ccircle cx='44' cy='28' r='5'/%3E%3Ccircle cx='58' cy='34' r='5'/%3E%3Cellipse cx='44' cy='48' rx='9' ry='7'/%3E%3C/g%3E%3C/svg%3E") ,
+   linear-gradient(180deg,var(--sky) 0,var(--sky-2) 320px,var(--cream) 640px);
+  background-attachment:fixed,scroll; min-height:100vh}
+h1,h2,h3{font-family:"Baloo 2","Nunito",sans-serif;line-height:1.2;margin:.2em 0 .4em}
+h1{font-size:1.9rem}h2{font-size:1.45rem}h3{font-size:1.15rem}
+a{color:var(--blue-d)}
+:focus-visible{outline:4px solid #ff9f1c;outline-offset:3px;border-radius:10px}
+.sr{position:absolute;left:-9999px}
+.skip{position:absolute;left:8px;top:-60px;background:var(--ink);color:#fff;padding:.5rem 1rem;border-radius:10px;z-index:99}
+.skip:focus{top:8px}
 
-  .wrap{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:0 18px 80px;}
+/* Header */
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border-bottom:3px solid var(--sky);
+  display:flex;align-items:center;gap:.6rem;padding:.5rem 1rem;flex-wrap:wrap}
+.brand{font-family:"Baloo 2";font-weight:800;font-size:1.2rem;color:var(--blue-d);text-decoration:none;display:flex;gap:.4rem;align-items:center}
+.top .sp{flex:1}
+.pill{background:var(--butter);color:var(--butter-d);border-radius:999px;padding:.15rem .8rem;font-weight:800;border:2px solid #fff;box-shadow:0 2px 0 rgba(0,0,0,.08)}
+.icon-btn{border:2px solid var(--sky);background:#fff;border-radius:12px;padding:.25rem .6rem;font:inherit;font-weight:800;color:var(--ink);cursor:pointer;min-height:44px;min-width:44px}
+.icon-btn:hover{background:var(--sky-2)}
 
-  /* ---------- header ---------- */
-  header{padding:34px 0 18px;text-align:center;}
-  .eyebrow{font-family:var(--font-hud);letter-spacing:.14em;text-transform:uppercase;font-size:12px;color:var(--flame-2);font-weight:600;}
-  h1{font-family:var(--font-display);font-size:clamp(28px,7vw,40px);margin:8px 0 6px;font-weight:800;line-height:1.05;
-     background:linear-gradient(90deg,#fff, #cfd0ff 60%, var(--flame-2));-webkit-background-clip:text;background-clip:text;color:transparent;}
-  .subtitle{color:var(--ink-dim);font-size:14.5px;max-width:480px;margin:0 auto;line-height:1.5;}
+main{max-width:980px;margin:0 auto;padding:1rem 1rem 3rem}
+main:focus,h1:focus,h2:focus{outline:none}
 
-  /* ---------- status bar / trajectory ---------- */
-  #statusbar{position:sticky;top:0;z-index:5;backdrop-filter:blur(10px);background:rgba(8,11,31,0.86);border-bottom:1px solid var(--line);padding:12px 18px 14px;}
-  .statusbar-inner{max-width:720px;margin:0 auto;}
-  .status-row{display:flex;align-items:center;justify-content:space-between;font-family:var(--font-hud);font-size:11.5px;color:var(--ink-dim);margin-bottom:8px;letter-spacing:.02em;}
-  .status-row b{color:var(--gold);font-weight:700;}
-  .track{position:relative;height:34px;}
-  .track-line{position:absolute;top:50%;left:14px;right:14px;height:3px;background:repeating-linear-gradient(90deg,var(--line) 0 6px, transparent 6px 12px);transform:translateY(-50%);}
-  .track-fill{position:absolute;top:50%;left:14px;height:3px;background:linear-gradient(90deg,var(--flame),var(--gold));transform:translateY(-50%);border-radius:3px;transition:width .6s cubic-bezier(.2,.8,.2,1);}
-  .node{position:absolute;top:50%;width:16px;height:16px;border-radius:50%;transform:translate(-50%,-50%);background:var(--space-panel);border:2px solid var(--ink-faint);transition:all .4s;}
-  .node.done{background:var(--gold);border-color:var(--gold);box-shadow:0 0 10px rgba(251,191,36,.7);}
-  .rocket{position:absolute;top:50%;transform:translate(-50%,-56%);font-size:20px;transition:left .7s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 0 6px rgba(255,107,74,.8));}
+/* Botones estilo pantalla táctil */
+.btn{font:inherit;font-weight:800;border:3px solid #fff;border-radius:999px;padding:.6rem 1.3rem;min-height:48px;cursor:pointer;color:#fff;
+  background:linear-gradient(180deg,#4a9be0,var(--blue));box-shadow:0 5px 0 var(--blue-d),0 8px 16px rgba(36,57,90,.2);transition:transform .08s,box-shadow .08s;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;justify-content:center}
+.btn:hover{filter:brightness(1.06)}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--blue-d)}
+.btn[disabled]{opacity:.55;cursor:not-allowed;filter:grayscale(.3)}
+.btn.green{background:linear-gradient(180deg,#7fd488,#3f9d5a);box-shadow:0 5px 0 #2d7a44,0 8px 16px rgba(36,57,90,.2)}
+.btn.warm{background:linear-gradient(180deg,#ffc15e,#f2993a);color:#3d2400;box-shadow:0 5px 0 #c27117,0 8px 16px rgba(36,57,90,.2)}
+.btn.lav{background:linear-gradient(180deg,#a68fe8,#7a63cf);box-shadow:0 5px 0 #5d49a8,0 8px 16px rgba(36,57,90,.2)}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--sky);box-shadow:0 4px 0 var(--sky)}
+.btn.sm{padding:.3rem .9rem;min-height:40px;font-size:.92rem}
 
-  /* ---------- station cards ---------- */
-  .station{margin-top:34px;border-radius:var(--radius);background:var(--panel-glass);border:1px solid var(--line);padding:22px 20px 24px;position:relative;overflow:hidden;}
-  .station::before{content:"";position:absolute;top:-40%;right:-20%;width:220px;height:220px;border-radius:50%;filter:blur(10px);opacity:.35;z-index:0;background:var(--planet-color,var(--nebula-1));}
-  .station > *{position:relative;z-index:1;}
-  .station-head{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
-  .planet-icon{width:46px;height:46px;border-radius:50%;flex:none;background:var(--planet-gradient, radial-gradient(circle at 32% 28%, #7c6bd9, #2D1B69));box-shadow:inset -6px -6px 14px rgba(0,0,0,.4), 0 0 18px rgba(255,255,255,.08);}
-  .station-num{font-family:var(--font-hud);font-size:11px;color:var(--flame-2);letter-spacing:.12em;text-transform:uppercase;font-weight:600;}
-  .station h2{font-family:var(--font-display);font-size:21px;margin:2px 0 0;font-weight:700;}
-  .station-desc{color:var(--ink-dim);font-size:13.5px;line-height:1.55;margin:10px 0 18px;}
-  .badge-open{display:inline-block;font-family:var(--font-hud);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);border:1px solid var(--line);border-radius:20px;padding:3px 10px;margin-bottom:14px;}
+.card{background:#fff;border:3px solid #fff;border-radius:var(--r);box-shadow:var(--shadow);padding:1.1rem 1.2rem}
+.grid{display:grid;gap:1rem}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.muted{color:var(--ink-soft)}
+.chip{display:inline-block;background:var(--lav);color:var(--lav-d);border-radius:999px;padding:.05rem .75rem;font-weight:800;font-size:.85rem}
+.chip.g{background:var(--mint);color:var(--mint-d)}.chip.b{background:var(--butter);color:var(--butter-d)}.chip.p{background:var(--peach);color:var(--peach-d)}
 
-  /* ---------- theory box ---------- */
-  .theory{background:rgba(255,255,255,.035);border-left:3px solid var(--flame);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--ink-dim);line-height:1.6;margin-bottom:18px;}
-  .theory b{color:var(--ink);}
+/* Escena del cachorro */
+.scene{position:relative;overflow:hidden;border-radius:30px;border:4px solid #fff;box-shadow:var(--shadow);
+  background:linear-gradient(180deg,#8fd3f7 0,#d3f0ff 62%);padding:1.2rem 1.2rem 0;min-height:340px}
+.scene .sun{position:absolute;right:28px;top:20px;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle,#fff6b0,#ffd84d);box-shadow:0 0 40px 14px rgba(255,226,100,.6)}
+.scene .cloud{position:absolute;background:#fff;border-radius:999px;height:28px;opacity:.95;animation:drift 40s linear infinite}
+.scene .cloud:before,.scene .cloud:after{content:"";position:absolute;background:#fff;border-radius:50%}
+.scene .cloud:before{width:34px;height:34px;left:14px;top:-16px}.scene .cloud:after{width:44px;height:44px;left:44px;top:-22px}
+.c1{width:110px;top:56px;left:-130px}.c2{width:80px;top:120px;left:-130px;animation-delay:-18s;animation-duration:55s}
+@keyframes drift{to{transform:translateX(1200px)}}
+.hill{position:absolute;left:-10%;right:-10%;bottom:-70px;height:170px;border-radius:50% 50% 0 0;background:linear-gradient(180deg,var(--grass),var(--grass-d))}
+.scene-in{position:relative;display:flex;gap:1.2rem;align-items:flex-end;flex-wrap:wrap;z-index:2}
+.hello{flex:1 1 300px;padding-bottom:1.2rem}
+.hello h1{color:#1c3f6e;text-shadow:0 2px 0 #fff}
+.bubble{background:#fff;border-radius:20px;padding:.7rem 1rem;box-shadow:0 4px 0 rgba(0,0,0,.08);position:relative;font-weight:700;max-width:420px}
+.bubble:after{content:"";position:absolute;right:46px;bottom:-12px;border:12px solid transparent;border-top-color:#fff;border-bottom:0}
+.petwrap{flex:0 0 200px;text-align:center;padding-bottom:.4rem}
+.pet{position:relative;background:none;border:0;cursor:pointer;font-size:7rem;line-height:1;padding:0;animation:bob 2.4s ease-in-out infinite;filter:drop-shadow(0 8px 6px rgba(0,0,0,.18))}
+.pet .acc{position:absolute;left:50%;top:-.28em;transform:translateX(-50%);font-size:.42em}
+@keyframes bob{50%{transform:translateY(-8px) rotate(-2deg)}}
+.heart{position:absolute;font-size:1.6rem;animation:up 1.2s forwards;pointer-events:none}
+@keyframes up{to{transform:translateY(-90px);opacity:0}}
+.petname{display:inline-flex;gap:.4rem;align-items:center;background:#fff;border-radius:999px;padding:.2rem .3rem .2rem .9rem;border:3px solid var(--sky);font-weight:800}
+.petname input{border:0;font:inherit;font-weight:800;width:7.5rem;color:var(--ink);background:transparent}
+.petname input:focus-visible{outline:3px solid #ff9f1c}
+.meter{height:14px;background:#e3edf6;border-radius:99px;overflow:hidden;border:2px solid #fff}
+.meter>span{display:block;height:100%;background:linear-gradient(90deg,#7fd488,#3f9d5a);border-radius:99px;transition:width .5s}
 
-  /* ---------- question blocks ---------- */
-  .q{margin-bottom:22px;}
-  .q:last-child{margin-bottom:0;}
-  .q-text{font-size:15px;font-weight:600;margin-bottom:12px;line-height:1.45;}
-  .options{display:flex;flex-direction:column;gap:9px;}
-  .opt{text-align:left;background:rgba(255,255,255,.045);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:12px 14px;font-family:var(--font-body);font-size:14px;cursor:pointer;transition:.18s;display:flex;align-items:center;gap:10px;}
-  .opt:hover{border-color:var(--ink-faint);background:rgba(255,255,255,.07);}
-  .opt .letter{font-family:var(--font-hud);font-weight:700;font-size:11px;color:var(--ink-faint);border:1px solid var(--ink-faint);width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;}
-  .opt.correct{border-color:var(--mint);background:rgba(74,222,128,.13);}
-  .opt.correct .letter{background:var(--mint);border-color:var(--mint);color:#052e12;}
-  .opt.wrong{border-color:var(--rose);background:rgba(251,113,133,.12);animation:shake .35s;}
-  .opt.wrong .letter{background:var(--rose);border-color:var(--rose);color:#3a0510;}
-  .opt.locked{cursor:default;opacity:.85;}
-  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+/* Mundos */
+.world{display:flex;flex-direction:column;gap:.6rem}
+.world .ico{font-size:2.2rem;width:3.2rem;height:3.2rem;display:grid;place-items:center;border-radius:16px}
+.world h3{margin:0}
+.stages{display:flex;gap:.4rem;flex-wrap:wrap}
+.stages .btn{flex:1 1 auto;font-size:.88rem;padding:.35rem .6rem;min-height:44px}
+.row{display:flex;gap:.8rem;align-items:center;flex-wrap:wrap}
 
-  .feedback{font-size:12.5px;font-family:var(--font-hud);margin-top:8px;min-height:16px;font-weight:600;}
-  .feedback.correct{color:var(--mint);}
-  .feedback.wrong{color:var(--rose);}
+/* Preguntas */
+.qtop{display:flex;gap:.8rem;align-items:center;margin-bottom:.8rem}
+.progress{flex:1;height:18px;background:#fff;border-radius:99px;border:3px solid #fff;box-shadow:inset 0 0 0 2px var(--sky);overflow:hidden}
+.progress>span{display:block;height:100%;background:linear-gradient(90deg,#ffc15e,#f2993a);border-radius:99px;transition:width .4s}
+.qcard{padding:1.3rem 1.3rem 1.5rem}
+.qtext{font-size:1.28rem;font-weight:800;margin:.5rem 0 .8rem;font-family:"Baloo 2","Nunito"}
+fieldset{border:0;padding:0;margin:0}
+.opt{display:flex;gap:.7rem;align-items:flex-start;padding:.75rem 1rem;margin:.5rem 0;border:3px solid var(--sky);border-radius:18px;background:#fff;cursor:pointer;font-weight:700;min-height:52px}
+.opt:hover{background:var(--sky-2)}
+.opt input{width:22px;height:22px;margin-top:.15rem;accent-color:var(--blue);flex:none}
+.opt.sel{border-color:var(--blue);background:var(--sky-2)}
+.opt.ok{border-color:#3f9d5a;background:var(--mint);color:var(--mint-d)}
+.opt.bad{border-color:#f2993a;background:var(--peach);color:var(--peach-d)}
+.opt .tag{margin-left:auto;font-weight:800;white-space:nowrap}
+.forecast{background:linear-gradient(180deg,#eaf7ff,#fff);border:3px dashed #8cc9ee;border-radius:18px;padding:.6rem 1rem;margin:.4rem 0 .8rem}
+.forecast ul{margin:.2rem 0 0;padding-left:1.2rem}
+table.t{border-collapse:collapse;width:100%;font-size:.95rem}
+.t th,.t td{border:2px solid var(--sky);padding:.35rem .5rem;text-align:left;vertical-align:top}
+.t th{background:var(--sky-2)}
+.mrow{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;align-items:center;padding:.5rem .6rem;margin:.4rem 0;border:3px solid var(--sky);border-radius:16px}
+.mrow select{font:inherit;font-weight:700;padding:.5rem;border-radius:12px;border:2px solid var(--blue);color:var(--ink);background:#fff;min-height:46px;width:100%}
+.mrow.ok{border-color:#3f9d5a;background:var(--mint)}.mrow.bad{border-color:#f2993a;background:var(--peach)}
+.mrow .fbk{grid-column:1/-1;font-weight:800;font-size:.92rem}
+@media(max-width:560px){.mrow{grid-template-columns:1fr}}
+ol.order{list-style:none;padding:0;margin:.4rem 0}
+ol.order li{display:flex;gap:.6rem;align-items:center;padding:.55rem .8rem;margin:.4rem 0;background:#fff;border:3px solid var(--sky);border-radius:16px;font-weight:700}
+ol.order li .n{background:var(--butter);color:var(--butter-d);width:2rem;height:2rem;border-radius:50%;display:grid;place-items:center;flex:none;font-weight:800}
+ol.order li span.tx{flex:1}
+ol.order li.ok{border-color:#3f9d5a;background:var(--mint)}ol.order li.bad{border-color:#f2993a;background:var(--peach)}
+.actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem}
+.fb{margin-top:1rem;border-radius:20px;padding:1rem 1.1rem;border:3px solid;animation:pop .3s}
+@keyframes pop{from{transform:scale(.96);opacity:0}}
+.fb.ok{background:var(--mint);border-color:#3f9d5a;color:#0f4a2e}
+.fb.bad{background:var(--peach);border-color:#f2993a;color:#6e3207}
+.fb h3{margin:0 0 .3rem}
+.fb .rev{background:rgba(255,255,255,.7);border-radius:12px;padding:.4rem .7rem;margin:.5rem 0;font-weight:700}
 
-  .fillrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px;}
-  .fillrow label{flex:1 1 170px;font-size:13.5px;color:var(--ink-dim);}
-  .fillrow input[type=text]{flex:1 1 150px;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:9px 10px;font-family:var(--font-body);font-size:14px;}
-  .fillrow input[type=text]:focus{outline:2px solid var(--flame);outline-offset:1px;}
-  .fillrow .check-btn{flex:none;}
-  .fillrow.correct{border-color:var(--mint);}
-  .fillrow.wrong{border-color:var(--rose);}
+/* Resultados */
+.stars{font-size:2.6rem;letter-spacing:.2rem}
+.big{font-family:"Baloo 2";font-size:3rem;font-weight:800;color:var(--blue-d);line-height:1}
+.bar{display:grid;grid-template-columns:minmax(120px,1.2fr) 3fr 3.2rem;gap:.6rem;align-items:center;margin:.3rem 0;font-weight:700}
+@media(max-width:560px){.bar{grid-template-columns:1fr 2fr 3rem;font-size:.9rem}}
 
-  .match-item{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px;flex-wrap:wrap;}
-  .match-item .txt{flex:1 1 220px;font-size:13.5px;line-height:1.4;}
-  .match-item select{flex:1 1 170px;background:rgba(0,0,0,.3);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:9px 10px;font-family:var(--font-body);font-size:13.5px;}
-  .match-item.correct{border-color:var(--mint);}
-  .match-item.wrong{border-color:var(--rose);}
+/* Estudio */
+.study ul{padding-left:1.2rem;margin:.3rem 0}
+.study li{margin:.25rem 0}
+.key{background:var(--butter);color:var(--butter-d);border-radius:10px;padding:.05rem .4rem;font-weight:800}
+.tip{background:var(--lav);color:var(--lav-d);border-radius:16px;padding:.6rem .9rem;margin:.6rem 0;font-weight:700}
+.flag{display:flex;height:70px;flex-direction:column;width:120px;border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.2);border-radius:6px;overflow:hidden}
+.flag i{display:block}.flag .a{background:#0b3d91;flex:1}.flag .w{background:#fff;flex:1}.flag .r{background:#c8102e;flex:2}
+.diag{display:flex;flex-wrap:wrap;gap:.6rem;align-items:stretch;margin:.5rem 0}
+.diag>div{flex:1 1 200px;border-radius:16px;padding:.6rem .9rem;font-weight:700}
 
-  .btn{font-family:var(--font-hud);font-weight:600;font-size:13px;letter-spacing:.02em;border:none;border-radius:10px;padding:9px 16px;cursor:pointer;background:linear-gradient(90deg,var(--flame),var(--flame-2));color:#1a0700;transition:.15s;}
-  .btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
-  .btn.ghost{background:transparent;border:1px solid var(--ink-faint);color:var(--ink-dim);}
-  .btn.ghost:hover{border-color:var(--ink);color:var(--ink);}
-  .btn:disabled{opacity:.5;cursor:default;transform:none;}
-
-  textarea{width:100%;min-height:90px;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;color:var(--ink);padding:12px;font-family:var(--font-body);font-size:14px;resize:vertical;line-height:1.5;}
-  textarea:focus{outline:2px solid var(--flame);outline-offset:1px;}
-  .reveal{margin-top:10px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.35);border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.55;color:var(--ink-dim);display:none;}
-  .reveal b{color:var(--gold);}
-  .reveal.show{display:block;}
-
-  table.matrix{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:16px;}
-  table.matrix th, table.matrix td{border:1px solid var(--line);padding:8px 7px;text-align:left;vertical-align:top;line-height:1.4;}
-  table.matrix th{background:rgba(255,255,255,.05);font-family:var(--font-hud);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-dim);}
-  table.matrix td.blank textarea{min-height:60px;font-size:12.5px;}
-
-  /* ---------- certificate ---------- */
-  #certificate{margin-top:34px;text-align:center;border-radius:var(--radius);padding:34px 22px;background:radial-gradient(circle at 50% -10%, rgba(255,184,74,.18), transparent 60%), var(--panel-glass);border:1px solid var(--line);}
-  #certificate .rocket-big{font-size:46px;display:block;margin-bottom:10px;}
-  #certificate h2{font-family:var(--font-display);font-size:24px;margin:0 0 6px;}
-  #certificate p{color:var(--ink-dim);font-size:14px;margin:0 0 16px;}
-  .score-big{font-family:var(--font-hud);font-size:40px;font-weight:700;color:var(--gold);}
-  .score-big span{font-size:18px;color:var(--ink-faint);}
-
-  footer{text-align:center;color:var(--ink-faint);font-size:11.5px;font-family:var(--font-hud);margin-top:40px;letter-spacing:.03em;}
-
-  @media (prefers-reduced-motion: reduce){
-    .star{animation:none;}
-    .rocket{transition:none;}
-    .track-fill{transition:none;}
-  }
+/* Auditoría */
+.audit table{width:100%;border-collapse:collapse;font-size:.92rem}
+.audit th,.audit td{border:2px solid var(--sky);padding:.4rem .5rem;text-align:left;vertical-align:top}
+.audit th{background:var(--sky-2)}
+.scroll{overflow-x:auto}
+footer{max-width:980px;margin:0 auto;padding:1rem;text-align:center;font-size:.85rem;color:var(--ink-soft)}
+.hidden{display:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+body.hc{--ink:#0b1b33;--ink-soft:#1c2f4d}
+body.hc .opt,body.hc .card{border-color:#0b1b33}
 </style>
 </head>
 <body>
-
-<div id="starfield"></div>
-
-<div id="statusbar">
-  <div class="statusbar-inner">
-    <div class="status-row">
-      <span>🚀 MISIÓN: REGIÓN CENTRAL</span>
-      <span><b id="scoreLabel">0</b>&nbsp;/&nbsp;<span id="scoreTotal">0</span> ⭐</span>
-    </div>
-    <div class="track" id="track">
-      <div class="track-line"></div>
-      <div class="track-fill" id="trackFill" style="width:0%"></div>
-      <!-- nodes + rocket injected by JS -->
-    </div>
-  </div>
-</div>
-
-<div class="wrap">
-  <header>
-    <div class="eyebrow">Base Espacial MEP · 4° Año</div>
-    <h1>Misión: Regiones<br>Socioeconómicas</h1>
-    <p class="subtitle">Tu nave orbita Costa Rica. Supera cada estación para completar la ruta de vuelo y aterrizar en tu planeta natal: la <b style="color:#fff">Región Central</b>.</p>
-  </header>
-
-  <!-- ESTACIÓN 1 -->
-  <section class="station" id="station-1" style="--planet-color:#5C2A6E;--planet-gradient:radial-gradient(circle at 32% 28%, #b98be0, #5C2A6E)">
-    <div class="station-head">
-      <div class="planet-icon"></div>
-      <div>
-        <div class="station-num">Estación 01 · Control de Misión</div>
-        <h2>¿Cómo se dividen las regiones?</h2>
-      </div>
-    </div>
-    <div class="theory">
-      Costa Rica se divide en <b>6 regiones socioeconómicas</b>: Central, Chorotega, Pacífico Central, Brunca, Huetar Caribe y Huetar Norte. Se definen por su <b>geografía, clima, actividades económicas y características socioculturales</b>. La <b>Región Central</b> es la más poblada y desarrollada; abarca partes de San José, Alajuela, Cartago y Heredia, y su cabecera es <b>San José</b>.
-    </div>
-    <p class="station-desc">Responde y confirma tus coordenadas antes de continuar el viaje.</p>
-
-    <div class="q" data-qid="s1" data-answer="1">
-      <div class="q-text">1. ¿Qué usan los geógrafos y economistas para dividir a Costa Rica en 6 regiones?</div>
-      <div class="options">
-        <button class="opt" data-idx="0">El color de las banderas municipales de cada cantón.</button>
-        <button class="opt" data-idx="1">Las características socioeconómicas, geográficas y actividades productivas comunes.</button>
-        <button class="opt" data-idx="2">La cantidad de escuelas primarias construidas en el siglo XIX.</button>
-        <button class="opt" data-idx="3">El tamaño exacto del mapa provincial.</button>
-      </div>
-      <div class="feedback"></div>
-    </div>
-
-    <div class="q" data-qid="s2" data-answer="1">
-      <div class="q-text">2. La Región Central está conformada por sectores de cuatro provincias. ¿Cuáles?</div>
-      <div class="options">
-        <button class="opt" data-idx="0">Guanacaste, Puntarenas, Limón y San José.</button>
-        <button class="opt" data-idx="1">Heredia, Alajuela, Cartago y San José.</button>
-        <button class="opt" data-idx="2">San José, Puntarenas, Alajuela y Limón.</button>
-        <button class="opt" data-idx="3">Cartago, Heredia, Puntarenas y Guanacaste.</button>
-      </div>
-      <div class="feedback"></div>
-    </div>
-
-    <div class="q" data-qid="s3" data-answer="2">
-      <div class="q-text">3. ¿Cuál es la cabecera (ciudad principal) de la Región Central?</div>
-      <div class="options">
-        <button class="opt" data-idx="0">Ciudad Quesada</button>
-        <button class="opt" data-idx="1">Liberia</button>
-        <button class="opt" data-idx="2">San José</button>
-        <button class="opt" data-idx="3">Golfito</button>
-      </div>
-      <div class="feedback"></div>
-    </div>
-  </section>
-
-  <!-- ESTACIÓN 2 -->
-  <section class="station" id="station-2" style="--planet-color:#1B4B5C;--planet-gradient:radial-gradient(circle at 32% 28%, #6fd7e0, #1B4B5C)">
-    <div class="station-head">
-      <div class="planet-icon"></div>
-      <div>
-        <div class="station-num">Estación 02 · Mapa Estelar</div>
-        <h2>Cabeceras de cada región</h2>
-      </div>
-    </div>
-    <p class="station-desc">Escribe la cabecera (ciudad principal) de cada región. Región Central ya está confirmada como referencia.</p>
-
-    <div class="fillrow" style="opacity:.6">
-      <label>1. Región Central</label>
-      <input type="text" value="San José" disabled>
-      <span style="font-family:var(--font-hud);font-size:11px;color:var(--ink-faint)">EJEMPLO</span>
-    </div>
-
-    <div class="fillrow" data-fid="f1" data-answers="liberia">
-      <label>2. Región Chorotega</label>
-      <input type="text" placeholder="Escribe la cabecera">
-      <button class="btn check-btn">Verificar</button>
-    </div>
-    <div class="fillrow" data-fid="f2" data-answers="puntarenas">
-      <label>3. Región Pacífico Central</label>
-      <input type="text" placeholder="Escribe la cabecera">
-      <button class="btn check-btn">Verificar</button>
-    </div>
-    <div class="fillrow" data-fid="f3" data-answers="san isidro de el general|golfito|san isidro">
-      <label>4. Región Brunca</label>
-      <input type="text" placeholder="Escribe la cabecera">
-      <button class="btn check-btn">Verificar</button>
-    </div>
-    <div class="fillrow" data-fid="f4" data-answers="ciudad quesada|quesada">
-      <label>5. Región Huetar Norte</label>
-      <input type="text" placeholder="Escribe la cabecera">
-      <button class="btn check-btn">Verificar</button>
-    </div>
-    <div class="fillrow" data-fid="f5" data-answers="limon">
-      <label>6. Región Huetar Caribe</label>
-      <input type="text" placeholder="Escribe la cabecera">
-      <button class="btn check-btn">Verificar</button>
-    </div>
-  </section>
-
-  <!-- ESTACIÓN 3 -->
-  <section class="station" id="station-3" style="--planet-color:#2C6B4F;--planet-gradient:radial-gradient(circle at 32% 28%, #8fe0b0, #2C6B4F)">
-    <div class="station-head">
-      <div class="planet-icon"></div>
-      <div>
-        <div class="station-num">Estación 03 · Laboratorio de Campo</div>
-        <h2>Explora la Región Central</h2>
-      </div>
-    </div>
-    <span class="badge-open">Bitácora libre · sin puntaje</span>
-    <div class="theory">
-      La Región Central está formada por el <b>Valle Central</b>, rodeado por la Cordillera Volcánica Central y de Talamanca, con <b>clima templado</b>. Produce café, caña de azúcar, hortalizas (papas, cebollas, zanahorias en Cartago) y leche en las zonas altas de Coronado y Cartago. Sus ríos —como el <b>Virilla</b> y el <b>Grande de Tárcoles</b>— reciben aguas residuales, basura y desechos industriales.
-    </div>
-
-    <div class="q">
-      <div class="q-text">Menciona tres productos agrícolas de las zonas altas de Cartago y Heredia:</div>
-      <textarea data-jid="j1" placeholder="Escribe aquí tu respuesta..."></textarea>
-      <button class="btn ghost reveal-btn" data-target="r1" style="margin-top:8px">Ver respuesta sugerida</button>
-      <div class="reveal" id="r1"><b>Respuesta sugerida:</b> Café, hortalizas como papas, cebollas y zanahorias, y flores (también se acepta la leche/ganado lechero).</div>
-    </div>
-
-    <div class="q">
-      <div class="q-text">Explica dos causas de la contaminación de los ríos Virilla o Grande de Tárcoles:</div>
-      <textarea data-jid="j2" placeholder="Escribe aquí tu respuesta..."></textarea>
-      <button class="btn ghost reveal-btn" data-target="r2" style="margin-top:8px">Ver respuesta sugerida</button>
-      <div class="reveal" id="r2"><b>Respuesta sugerida:</b> El vertido de aguas residuales domiciliarias sin tratamiento y el vertido de desechos industriales/químicos y basura directamente a los cauces.</div>
-    </div>
-
-    <div class="q">
-      <div class="q-text">Describe dos problemáticas frecuentes de la vida cotidiana en la Región Central:</div>
-      <textarea data-jid="j3" placeholder="Escribe aquí tu respuesta..."></textarea>
-      <button class="btn ghost reveal-btn" data-target="r3" style="margin-top:8px">Ver respuesta sugerida</button>
-      <div class="reveal" id="r3"><b>Respuesta sugerida:</b> El congestionamiento vial (presas) y el desorden urbanístico o falta de vivienda; también se mencionan la contaminación sónica/ambiental y la delincuencia.</div>
-    </div>
-  </section>
-
-  <!-- ESTACIÓN 4 -->
-  <section class="station" id="station-4" style="--planet-color:#6E4A1F;--planet-gradient:radial-gradient(circle at 32% 28%, #f0c17e, #6E4A1F)">
-    <div class="station-head">
-      <div class="planet-icon"></div>
-      <div>
-        <div class="station-num">Estación 04 · Contacto Cultural</div>
-        <h2>Manifestaciones artísticas</h2>
-      </div>
-    </div>
-    <p class="station-desc">Selecciona la región correspondiente a cada manifestación cultural.</p>
-
-    <div class="match-item" data-mid="m1" data-answer="2">
-      <div class="txt">🥁 Música Calipso y bailes al ritmo del tambor y banjo.</div>
-      <select>
-        <option value="">Selecciona la región…</option>
-        <option value="1">Región Chorotega</option>
-        <option value="2">Región Huetar Caribe</option>
-        <option value="3">Región Central</option>
-        <option value="4">Región Brunca</option>
-      </select>
-    </div>
-    <div class="match-item" data-mid="m2" data-answer="1">
-      <div class="txt">🏺 Artesanía en cerámica de barro cocido en Guaitil.</div>
-      <select>
-        <option value="">Selecciona la región…</option>
-        <option value="1">Región Chorotega</option>
-        <option value="2">Región Huetar Caribe</option>
-        <option value="3">Región Central</option>
-        <option value="4">Región Brunca</option>
-      </select>
-    </div>
-    <div class="match-item" data-mid="m3" data-answer="4">
-      <div class="txt">👹 Baile tradicional de los Diablitos en Boruca y Rey Curré.</div>
-      <select>
-        <option value="">Selecciona la región…</option>
-        <option value="1">Región Chorotega</option>
-        <option value="2">Región Huetar Caribe</option>
-        <option value="3">Región Central</option>
-        <option value="4">Región Brunca</option>
-      </select>
-    </div>
-    <div class="match-item" data-mid="m4" data-answer="3">
-      <div class="txt">🎭 Elaboración de cimarronas y gigantescas mascaradas de cartón.</div>
-      <select>
-        <option value="">Selecciona la región…</option>
-        <option value="1">Región Chorotega</option>
-        <option value="2">Región Huetar Caribe</option>
-        <option value="3">Región Central</option>
-        <option value="4">Región Brunca</option>
-      </select>
-    </div>
-    <button class="btn" id="checkMatches" style="margin-top:8px">Verificar pareo</button>
-    <div class="feedback" id="matchFeedback"></div>
-  </section>
-
-  <!-- ESTACIÓN 5 -->
-  <section class="station" id="station-5" style="--planet-color:#7A2E2E;--planet-gradient:radial-gradient(circle at 32% 28%, #f09a9a, #7A2E2E)">
-    <div class="station-head">
-      <div class="planet-icon"></div>
-      <div>
-        <div class="station-num">Estación 05 · Archivo de Tradiciones</div>
-        <h2>Costumbres costarricenses</h2>
-      </div>
-    </div>
-    <span class="badge-open">Bitácora libre · sin puntaje</span>
-    <div class="theory">Las tradiciones costarricenses —fiestas patronales, mascaradas, Tope y Zapote, bailes folclóricos— se conservan de generación en generación y fortalecen la identidad nacional.</div>
-
-    <div class="q">
-      <div class="q-text">Las Mascaradas: ¿en qué consisten y por qué es importante conservarlas?</div>
-      <textarea data-jid="j4" placeholder="Escribe aquí tu respuesta..."></textarea>
-      <button class="btn ghost reveal-btn" data-target="r4" style="margin-top:8px">Ver respuesta sugerida</button>
-      <div class="reveal" id="r4"><b>Respuesta sugerida:</b> Son figuras gigantes de cartón o madera con cabezas grandes que representan personajes populares, históricos o de fantasía, y que bailan al ritmo de la cimarrona en fiestas patronales. Es importante conservarlas porque forman parte de la identidad cultural y se transmiten de generación en generación.</div>
-    </div>
-
-    <div class="q">
-      <div class="q-text">Fiestas de Fin de Año (Tope y Zapote): ¿en qué consisten y por qué es importante conservarlas?</div>
-      <textarea data-jid="j5" placeholder="Escribe aquí tu respuesta..."></textarea>
-      <button class="btn ghost reveal-btn" data-target="r5" style="margin-top:8px">Ver respuesta sugerida</button>
-      <div class="reveal" id="r5"><b>Respuesta sugerida:</b> Son festejos de fin de año con desfile de caballos (Tope), ferias, juegos mecánicos y actividades de pólvora en Zapote. Son importantes porque reúnen a las familias y son una tradición nacional que celebra el cierre del año.</div>
-    </div>
-  </section>
-
-  <!-- ESTACIÓN 6 -->
-  <section class="station" id="station-6" style="--planet-color:#2A3F7A;--planet-gradient:radial-gradient(circle at 32% 28%, #9db3f0, #2A3F7A)">
-    <div class="station-head">
-      <div class="planet-icon"></div>
-      <div>
-        <div class="station-num">Estación 06 · Torre de Aterrizaje</div>
-        <h2>Matriz comparativa</h2>
-      </div>
-    </div>
-    <p class="station-desc">Antes de aterrizar, completa los dos espacios que faltan en el cuadro. Es reflexión libre, sin puntaje.</p>
-
-    <table class="matrix">
-      <tr><th>Región</th><th>Relieve / Clima</th><th>Actividad Económica</th><th>Aspecto Histórico / Cultural</th></tr>
-      <tr><td>Central</td><td>Valle rodeado de cordilleras, clima templado.</td><td>Comercio, servicios, industria, café y hortalizas.</td><td>Asentamientos del siglo XIX y cafetaleros.</td></tr>
-      <tr><td>Chorotega</td><td>Llanuras y cordillera de Guanacaste. Clima seco.</td><td>Turismo de playa, ganadería, arroz y caña.</td><td>Anexión del Partido de Nicoya (1824).</td></tr>
-      <tr><td>Huetar Caribe</td><td>Llanuras del Caribe y costa. Clima lluvioso.</td><td>Influencia afrocostarricense y ferrocarril.</td>
-        <td class="blank"><textarea data-jid="j6" placeholder="¿Qué aspecto histórico destaca aquí?"></textarea></td></tr>
-      <tr><td>Brunca</td><td>Fila Brunqueña y Valle del General.</td><td>Piña, palma africana y depósito libre (Golfito).</td>
-        <td class="blank"><textarea data-jid="j7" placeholder="¿Qué aspecto histórico destaca aquí?"></textarea></td></tr>
-      <tr><td>Huetar Norte</td><td>Llanuras extensas (San Carlos, Upala).</td><td>Ganadería, piña, cítricos y turismo (Arenal).</td><td>Colonización agrícola interna.</td></tr>
-      <tr><td>Pacífico Central</td><td>Franja costera angosta y montañas cercanas.</td><td>Pesca, actividad portuaria (Caldera) y turismo.</td><td>Antigua vía de salida del café por Puntarenas.</td></tr>
-    </table>
-    <button class="btn ghost reveal-btn" data-target="r6r7">Ver respuesta sugerida</button>
-    <div class="reveal" id="r6r7">
-      <b>Huetar Caribe:</b> La llegada de mano de obra afrocaribeña (jamaiquina) para construir el Ferrocarril al Atlántico dejó una fuerte herencia afrocostarricense en la región.<br><br>
-      <b>Brunca:</b> El desarrollo bananero de la United Fruit Company marcó la historia económica y social de la zona, junto con la presencia de los pueblos indígenas Boruca y Térraba.
-    </div>
-  </section>
-
-  <div id="certificate" style="display:none">
-    <span class="rocket-big">🛬</span>
-    <h2>¡Aterrizaje exitoso, explorador!</h2>
-    <p>Completaste la Misión Regiones Socioeconómicas de Costa Rica.</p>
-    <div class="score-big" id="finalScore">0<span>/12 ⭐</span></div>
-    <p style="margin-top:14px">Región Central: donde vive tu tripulación.</p>
-    <button class="btn ghost" id="resetBtn" style="margin-top:10px">Reiniciar misión</button>
-  </div>
-
-  <footer>MISIÓN REGIONES CR · Estudios Sociales 4° · MEP Costa Rica</footer>
-</div>
+<a class="skip" href="#app">Saltar al contenido</a>
+<header class="top">
+  <a class="brand" href="#/"><span aria-hidden="true">🐾</span> Aventura Sociales 4.°</a>
+  <span class="sp"></span>
+  <span class="pill" title="Huesitos ganados" id="bones" aria-live="polite">🦴 0</span>
+  <button class="icon-btn" id="fsDown" aria-label="Letra más pequeña">A−</button>
+  <button class="icon-btn" id="fsUp" aria-label="Letra más grande">A+</button>
+  <button class="icon-btn" id="hcBtn" aria-pressed="false" aria-label="Alto contraste">Contraste</button>
+</header>
+<main id="app" tabindex="-1"></main>
+<footer>
+  Material de práctica no oficial, creado a partir del temario «Segunda Prueba, II semestre 2026 · Estudios Sociales · jueves 12 de noviembre».<br>
+  Los porcentajes y niveles de desempeño son una referencia para estudiar, no una calificación oficial.
+</footer>
 
 <script>
-(function(){
-  "use strict";
+"use strict";
+/* =========================================================
+   1. CONTENIDO — Temas, indicadores y subpuntos (auditoría)
+   ========================================================= */
+const LEVELS={1:{n:'Conocer',e:'🔎',d:'Recordar y reconocer'},2:{n:'Aplicar',e:'🛠️',d:'Usar lo aprendido en situaciones'},3:{n:'Analizar',e:'🧩',d:'Analizar y resolver problemas'}};
 
-  /* ---------- starfield generation ---------- */
-  var field = document.getElementById('starfield');
-  var starCount = window.innerWidth < 500 ? 60 : 100;
-  for(var i=0;i<starCount;i++){
-    var s = document.createElement('div');
-    s.className='star';
-    var size = (Math.random()*2+0.6).toFixed(1);
-    s.style.width = size+'px';
-    s.style.height = size+'px';
-    s.style.top = (Math.random()*100)+'%';
-    s.style.left = (Math.random()*100)+'%';
-    s.style.animationDelay = (Math.random()*4)+'s';
-    field.appendChild(s);
+/* Subpuntos del temario: cada ítem se etiqueta con uno o más. La auditoría verifica que ninguno quede vacío. */
+const SUB={
+ d1:'Derechos de los niños y las niñas',d2:'Deberes de los niños y las niñas',d3:'Instituciones que promueven y protegen los derechos',d4:'Valorar la importancia de cumplir los deberes',
+ i1:'Hechos y acontecimientos de la Independencia (1821)',i2:'Símbolos nacionales',i3:'Valoración: identidad y orgullo nacional',i4:'Vida democrática y ciudadanía (aplicación)',
+ c1:'Tiempo atmosférico y su diferencia con el clima',c2:'Elementos del tiempo atmosférico',c3:'Interpretar información del tiempo y relacionarla con la vida cotidiana',
+ t1:'Tipos de clima que predominan en el territorio nacional',t2:'Características del clima según regiones socioeconómicas',
+ f1:'Factores que afectan el clima',f2:'Características de la época seca y de la lluviosa',f3:'Relación con actividades agrícolas, económicas, recreativas y cotidianas',
+ g1:'Cambio climático: causas',g2:'Calentamiento global',g3:'Fenómeno de El Niño',g4:'Fenómeno de La Niña',g5:'Destrucción de la capa de ozono',g6:'Consecuencias en los ecosistemas',g7:'Consecuencias en las personas y las actividades humanas',
+ e1:'12 de octubre: hecho histórico del encuentro de culturas',e2:'Cambios y aportes sociales y culturales',e3:'Cambios y aportes económicos y alimentarios',e4:'Cambios y aportes lingüísticos y en formas de vida',e5:'Valoración de la diversidad y respeto hacia las diferentes culturas'
+};
+
+const TOPICS=[
+{id:1,emoji:'🏫',bg:'#d7ecff',name:'Derechos y deberes',ae:'Aprendizaje 1',
+ ind:'Reconoce y diferencia los derechos y deberes de los niños y las niñas, identificando instituciones que promueven y protegen sus derechos y valorando la importancia de cumplir sus deberes.',
+ subs:['d1','d2','d3','d4'],
+ study:`<div class="grid g2">
+ <div class="card"><h3>🌟 Mis derechos</h3><p>Un <span class="key">derecho</span> es algo que todas las niñas y los niños <b>pueden y merecen tener</b>, sin importar su sexo, color de piel, país o condición.</p>
+ <ul><li>Vida, salud y alimentación</li><li>Educación</li><li>Nombre y nacionalidad</li><li>Familia y protección contra el maltrato</li><li>Jugar y descansar (recreación)</li><li>Dar su opinión y ser escuchados</li><li>Vivir en un ambiente sano</li></ul></div>
+ <div class="card"><h3>🤝 Mis deberes</h3><p>Un <span class="key">deber</span> es una <b>responsabilidad</b> que cumplo para convivir bien y respetar los derechos de los demás.</p>
+ <ul><li>Estudiar y esforzarme</li><li>Respetar a compañeros, docentes y familia</li><li>Cuidar los materiales y la escuela</li><li>Cuidar el ambiente (no tirar basura)</li><li>Cumplir las normas y colaborar en casa</li></ul></div></div>
+ <div class="card" style="margin-top:1rem"><h3>🏛️ Instituciones que protegen mis derechos</h3>
+ <div class="scroll"><table class="t"><tr><th>Institución</th><th>¿Qué hace?</th></tr>
+ <tr><td><b>PANI</b> (Patronato Nacional de la Infancia)</td><td>Protege los derechos de niños, niñas y adolescentes y atiende casos de maltrato.</td></tr>
+ <tr><td><b>MEP</b> y la escuela</td><td>Garantizan el derecho a la educación.</td></tr>
+ <tr><td><b>CCSS</b> (EBAIS y clínicas)</td><td>Brindan atención de salud y vacunas.</td></tr>
+ <tr><td><b>911</b></td><td>Atiende emergencias.</td></tr>
+ <tr><td><b>Municipalidad</b> de Vázquez de Coronado, <b>Gobierno Estudiantil</b></td><td>Trabajan por la comunidad y por la participación estudiantil.</td></tr></table></div></div>
+ <p class="tip">💡 Truco: <b>a cada derecho le corresponde un deber</b>. Derecho a la educación → deber de estudiar. Derecho a opinar → deber de respetar otras opiniones. Los derechos <u>no se pierden</u> si se incumple un deber, pero cumplirlos hace que todos podamos disfrutarlos.</p>`},
+
+{id:2,emoji:'🇨🇷',bg:'#ffe3e3',name:'Independencia y símbolos',ae:'Aprendizaje 2',
+ ind:'Reconoce la importancia histórica de la Independencia de Costa Rica, identificando los principales acontecimientos relacionados con este proceso y los símbolos nacionales, valorando su significado como elementos de identidad y orgullo nacional.',
+ subs:['i1','i2','i3','i4'],
+ study:`<div class="card"><h3>📜 Línea de tiempo de 1821</h3>
+ <div class="diag"><div style="background:#e6f6ff">🗓️ <b>15 sept 1821</b><br>En Guatemala se firma el Acta de Independencia de Centroamérica. Antes éramos parte del imperio español (Capitanía General de Guatemala).</div>
+ <div style="background:#fff0b8">🐎 <b>13 oct 1821</b><br>La noticia llega a Cartago por correo a caballo y mula. ¡Tardó semanas!</div>
+ <div style="background:#e9dffc">☁️ <b>29 oct 1821</b><br>Acta de los Nublados: Cartago acuerda esperar y ver «qué pasaba» (había incertidumbre).</div>
+ <div style="background:#d8f4e2">📘 <b>1 dic 1821</b><br>Pacto de Concordia: primer documento político de Costa Rica independiente.</div></div>
+ <p>La independencia de Costa Rica fue un proceso <b>pacífico</b>: no hubo guerra contra España.</p></div>
+ <div class="grid g2" style="margin-top:1rem">
+ <div class="card"><h3>🏳️ Símbolos patrios</h3><div class="row"><div class="flag" aria-label="Bandera de Costa Rica"><i class="a"></i><i class="w"></i><i class="r"></i><i class="w"></i><i class="a"></i></div></div>
+ <ul><li><b>Bandera</b> (1848, diseño de <b>Pacífica Fernández</b>): <b>azul</b> = cielo y oportunidades; <b>blanco</b> = paz y sabiduría; <b>rojo</b> = generosidad y calor humano.</li>
+ <li><b>Escudo</b>: <b>7 estrellas</b> = las 7 provincias; <b>3 volcanes</b>; <b>2 océanos</b> (Atlántico y Pacífico) con barcos.</li>
+ <li><b>Himno Nacional</b>: música de <b>Manuel María Gutiérrez</b>, letra de <b>José María Zeledón «Billo»</b>.</li></ul></div>
+ <div class="card"><h3>🌿 Símbolos naturales y culturales</h3><ul><li>Flor: <b>guaria morada</b></li><li>Árbol: <b>guanacaste</b></li><li>Ave: <b>yigüirro</b></li><li>Símbolo del trabajo: la <b>carreta típica</b></li><li>Instrumento nacional: la <b>marimba</b></li></ul>
+ <p class="tip">Las 7 provincias: San José, Alajuela, Cartago, Heredia, Guanacaste, Puntarenas y Limón.</p></div></div>
+ <div class="card" style="margin-top:1rem"><h3>🗳️ Identidad, orgullo y democracia</h3><p>Celebramos el <b>15 de setiembre</b> con el desfile de faroles y actos cívicos para valorar nuestra <span class="key">identidad</span>. Vivir en democracia significa <b>participar</b> (votar, elegir el Gobierno Estudiantil), <b>respetar a la mayoría</b> y también a las minorías, y cuidar los símbolos y la libertad que heredamos.</p></div>`},
+
+{id:3,emoji:'🌦️',bg:'#e0f7ff',name:'Tiempo y clima',ae:'Aprendizaje 3',
+ ind:'Diferencia el clima del tiempo atmosférico, identificando y describiendo sus principales elementos, interpretando información sobre las condiciones atmosféricas y relacionándolas con situaciones de la vida cotidiana.',
+ subs:['c1','c2','c3'],
+ study:`<div class="diag"><div style="background:#fff0b8">⏱️ <b>Tiempo atmosférico</b><br>Cómo está la atmósfera <u>en un lugar y momento concreto</u> (hoy, esta tarde). Cambia rápido.<br><i>«Hoy llovió a las 3 p. m.»</i></div>
+ <div style="background:#d8f4e2">📅 <b>Clima</b><br>Comportamiento <u>promedio</u> del tiempo en un lugar durante <b>muchos años</b> (unos 30).<br><i>«En el Caribe llueve casi todo el año.»</i></div></div>
+ <div class="card" style="margin-top:1rem"><h3>🧪 Elementos del tiempo atmosférico</h3>
+ <div class="scroll"><table class="t"><tr><th>Elemento</th><th>¿Qué es?</th><th>Instrumento</th></tr>
+ <tr><td>Temperatura</td><td>Qué tan caliente o frío está el aire (°C)</td><td>Termómetro</td></tr>
+ <tr><td>Precipitación</td><td>Agua que cae: lluvia, granizo</td><td>Pluviómetro</td></tr>
+ <tr><td>Viento</td><td>Aire en movimiento</td><td>Anemómetro / veleta</td></tr>
+ <tr><td>Presión atmosférica</td><td>Peso del aire sobre nosotros</td><td>Barómetro</td></tr>
+ <tr><td>Humedad</td><td>Cantidad de vapor de agua en el aire</td><td>Higrómetro</td></tr>
+ <tr><td>Nubosidad</td><td>Cuánto cielo cubren las nubes</td><td>Observación</td></tr></table></div></div>
+ <p class="tip">⚠️ La <b>altitud</b> y la <b>latitud</b> NO son elementos: son <b>factores</b> del clima.</p>
+ <div class="card"><h3>📰 Leer un pronóstico</h3><p>El <b>Instituto Meteorológico Nacional (IMN)</b> informa el pronóstico. Fíjate en: temperatura mínima y máxima, % de lluvia, viento y nubosidad. Con eso decides qué ropa llevar, si habrá recreo al aire libre o cuándo regar un cultivo.</p></div>`},
+
+{id:4,emoji:'🗺️',bg:'#e3f6dc',name:'Climas de Costa Rica',ae:'Aprendizaje 3',
+ ind:'Reconoce los diversos tipos de climas que predominan en el territorio nacional y sus características, según las regiones socioeconómicas.',
+ subs:['t1','t2'],
+ study:`<p>Costa Rica está en la <b>zona tropical</b> (cerca del ecuador): hace calor en las tierras bajas y solo tenemos <b>dos épocas</b> (seca y lluviosa), no cuatro estaciones.</p>
+ <div class="card"><div class="scroll"><table class="t"><tr><th>Región socioeconómica</th><th>Clima predominante</th></tr>
+ <tr><td><b>Central</b> (San José, Alajuela, Cartago, Heredia) — <b>aquí está Coronado</b></td><td>Templado y fresco, con época seca y lluviosa definidas; en las montañas hay neblina.</td></tr>
+ <tr><td><b>Chorotega</b> (Guanacaste)</td><td>Cálido y seco; época seca muy marcada (clima tropical seco).</td></tr>
+ <tr><td><b>Pacífico Central</b></td><td>Cálido y húmedo; época lluviosa larga.</td></tr>
+ <tr><td><b>Brunca</b> (Pacífico Sur)</td><td>Cálido y muy lluvioso.</td></tr>
+ <tr><td><b>Huetar Caribe</b> (Limón)</td><td>Cálido y húmedo; llueve casi todo el año (tropical húmedo).</td></tr>
+ <tr><td><b>Huetar Norte</b></td><td>Cálido y lluvioso gran parte del año.</td></tr>
+ <tr><td>Cumbres de cordillera (Cerro de la Muerte)</td><td>Clima de montaña: frío.</td></tr></table></div></div>
+ <p class="tip">📍 San Rafael de Coronado está en las faldas de la cordillera, a más de 1 500 m: es <b>fresco, húmedo y con neblina</b>.</p>`},
+
+{id:5,emoji:'⛰️',bg:'#fff3c9',name:'Factores y épocas',ae:'Aprendizaje 4',
+ ind:'Identifica y explica los principales factores que afectan el clima, diferenciando las características de la época seca y lluviosa y relacionándolas con las actividades agrícolas, económicas, recreativas y cotidianas que realizan las personas en su comunidad.',
+ subs:['f1','f2','f3'],
+ study:`<div class="grid g2"><div class="card"><h3>🧭 Factores del clima</h3><ul>
+ <li><b>Latitud</b>: cerca del ecuador, más calor.</li>
+ <li><b>Altitud</b>: a más altura, <b>más frío</b> (baja unos 6 °C cada 1 000 m).</li>
+ <li><b>Relieve</b> (montañas): detienen las nubes; el lado que recibe el viento húmedo llueve más.</li>
+ <li><b>Vientos alisios</b>: traen humedad del mar Caribe.</li>
+ <li><b>Cercanía al mar</b> y corrientes marinas: suavizan la temperatura y dan humedad.</li>
+ <li><b>Vegetación</b>: los bosques mantienen humedad y suelo.</li></ul></div>
+ <div class="card"><h3>☀️🌧️ Épocas</h3>
+ <p><b>Seca (verano)</b>: diciembre a abril. Cielo despejado, poca lluvia, viento fuerte, ríos bajos, suelos secos.</p>
+ <p><b>Lluviosa (invierno)</b>: mayo a noviembre. Lluvias casi todas las tardes, ríos crecidos, paisaje verde, riesgo de inundaciones y deslizamientos.</p></div></div>
+ <div class="card" style="margin-top:1rem"><h3>👩‍🌾 ¿Y las actividades?</h3><div class="grid g2"><div><b>Época seca</b><ul><li>Corta de caña (zafra)</li><li>Turismo de playa y ferias al aire libre</li><li>Deportes y paseos</li><li>Riego en cultivos</li></ul></div>
+ <div><b>Época lluviosa</b><ul><li>Siembra de maíz, frijoles y arroz</li><li>Más agua para producir electricidad y regar</li><li>Precaución: calles resbalosas, derrumbes</li><li>Actividades bajo techo por las tardes</li></ul></div></div></div>`},
+
+{id:6,emoji:'🌍',bg:'#e9dffc',name:'Cambio climático',ae:'Aprendizaje 4',
+ ind:'Reconoce y explica el cambio climático, identificando algunas de sus principales causas y consecuencias, como el calentamiento global, el fenómeno del niño y La Niña, la destrucción de la capa de ozono, sus consecuencias en los ecosistemas, las personas y las actividades humanas.',
+ subs:['g1','g2','g3','g4','g5','g6','g7'],
+ study:`<div class="card"><h3>🔥 Cadena del calentamiento</h3><div class="diag"><div style="background:#ffe6d0">1️⃣ Se queman combustibles y se talan bosques</div><div style="background:#fff0b8">2️⃣ Aumentan los gases de efecto invernadero (CO₂, metano)</div><div style="background:#e9dffc">3️⃣ La Tierra retiene más calor: <b>calentamiento global</b></div><div style="background:#d8f4e2">4️⃣ Cambian las lluvias y las temperaturas: <b>cambio climático</b></div></div></div>
+ <div class="grid g2" style="margin-top:1rem">
+ <div class="card"><h3>🌊 El Niño y La Niña</h3><p><b>El Niño</b>: el océano Pacífico se calienta más de lo normal. En Costa Rica llueve menos: <b>sequías</b>, sobre todo en el Pacífico.</p><p><b>La Niña</b>: el Pacífico se enfría. Llueve más: <b>inundaciones y deslizamientos</b>.</p><p class="muted">Son fenómenos naturales y cíclicos; no son lo mismo que el cambio climático.</p></div>
+ <div class="card"><h3>🛡️ Capa de ozono</h3><p>Está en la atmósfera alta y nos protege de los <b>rayos ultravioleta</b>. Los gases <b>CFC</b> (aerosoles, refrigeradores viejos) la dañan. Sin ella: más quemaduras de piel, problemas en la vista y daño a plantas y animales.</p></div></div>
+ <div class="grid g2" style="margin-top:1rem"><div class="card"><h3>🐠 Ecosistemas</h3><ul><li>Derretimiento de glaciares y aumento del nivel del mar</li><li>Corales blanqueados</li><li>Especies que pierden su hogar</li></ul></div>
+ <div class="card"><h3>👨‍👩‍👧 Personas y actividades</h3><ul><li>Sequías: se pierden cosechas y falta agua</li><li>Inundaciones y deslizamientos</li><li>Olas de calor y enfermedades</li><li>Agricultura, turismo y pesca afectados</li></ul></div></div>
+ <p class="tip">🌱 ¿Qué puedo hacer? Sembrar árboles, ahorrar energía y agua, reciclar, reducir plásticos y usar transporte público o bicicleta.</p>`},
+
+{id:7,emoji:'🤝',bg:'#ffe9f3',name:'12 de octubre',ae:'Efeméride',
+ ind:'Reconoce algunas consecuencias del encuentro de culturas, los cambios y aportes en aspectos sociales, culturales, económicos, alimentarios, lingüísticos y en las formas de vida de los pueblos, valorando la diversidad cultural y el respeto hacia las diferentes culturas.',
+ subs:['e1','e2','e3','e4','e5'],
+ study:`<div class="card"><h3>⛵ ¿Qué pasó?</h3><p>El <b>12 de octubre de 1492</b> Cristóbal Colón llegó a América (isla Guanahaní). Se encontraron pueblos <b>indígenas</b>, <b>europeos</b> y, más tarde, <b>africanos</b>. En Costa Rica se llegó en 1502 (cuarto viaje de Colón). Hoy se conmemora como <b>Día de las Culturas</b> (antes «Día de la Raza»).</p></div>
+ <div class="card" style="margin-top:1rem"><div class="scroll"><table class="t"><tr><th>Aspecto</th><th>Cambios y aportes</th></tr>
+ <tr><td>🍽️ Alimentos y economía</td><td>Indígenas: maíz, cacao, frijol, papa, tomate. Europeos: trigo, caña de azúcar, ganado vacuno y cerdos, caballos. Nuevo comercio entre continentes.</td></tr>
+ <tr><td>🗣️ Idioma</td><td>El español se extiende; muchas palabras indígenas siguen vivas (chocolate, tomate, aguacate).</td></tr>
+ <tr><td>🎶 Sociedad y cultura</td><td>Mezcla de creencias, fiestas, música (aportes africanos como tambores y calipso limonense) y religión.</td></tr>
+ <tr><td>🏠 Formas de vida</td><td>Nuevas herramientas, ciudades, oficios y formas de vivienda.</td></tr>
+ <tr><td>⚠️ Consecuencias difíciles</td><td>Enfermedades nuevas, pérdida de tierras, trabajo forzado y esclavitud.</td></tr></table></div></div>
+ <p class="tip">❤️ Valorar la diversidad: escuchar, aprender de otras tradiciones y <b>nunca burlarse</b>. Decimos «encuentro de culturas» porque ya vivían pueblos con su propia cultura.</p>`}
+];
+
+/* =========================================================
+   2. BANCO DE ÍTEMS
+   y: mc (opción 1 = correcta) | tf | match | order (s = orden correcto)
+   l: nivel 1 conocer · 2 aplicar · 3 analizar    k: subpuntos
+   ========================================================= */
+const FC=`<div class="forecast"><b>📰 Pronóstico · Coronado · hoy</b><ul><li>🌡️ Mínima 13 °C · Máxima 21 °C</li><li>🌧️ Probabilidad de lluvia: 80 % (por la tarde)</li><li>💨 Viento: 15 km/h</li><li>☁️ Cielo muy nublado</li></ul></div>`;
+const FC3=`<div class="forecast"><b>📊 Pronóstico de tres días</b><div class="scroll"><table class="t"><tr><th>Día</th><th>Temperatura</th><th>Lluvia</th><th>Viento</th></tr><tr><td>Lunes</td><td>20 °C</td><td>60 %</td><td>10 km/h</td></tr><tr><td>Martes</td><td>18 °C</td><td>90 %</td><td>25 km/h</td></tr><tr><td>Miércoles</td><td>22 °C</td><td>20 %</td><td>8 km/h</td></tr></table></div></div>`;
+const FC2=`<div class="forecast"><b>📊 Datos de dos lugares</b><div class="scroll"><table class="t"><tr><th>Lugar</th><th>Temperatura promedio</th><th>Lluvia al año</th><th>Meses secos</th></tr><tr><td>A</td><td>26 °C</td><td>4 000 mm</td><td>Casi ninguno</td></tr><tr><td>B</td><td>28 °C</td><td>1 500 mm</td><td>5 meses</td></tr></table></div></div>`;
+
+const QS=[
+/* ---------- Tema 1: derechos y deberes ---------- */
+{t:1,l:1,k:'d1',y:'mc',q:'¿Cuál de las siguientes opciones es un derecho de los niños y las niñas?',o:['Recibir educación','Faltar a clases cuando quiera','No cuidar los materiales de la escuela','Dejar de respetar a las demás personas'],e:'La educación es un derecho de toda la niñez. Faltar a clases, descuidar los bienes o irrespetar a otros son conductas que incumplen deberes, no derechos.'},
+{t:1,l:1,k:'d2',y:'mc',q:'¿Qué es un deber?',o:['Una responsabilidad que debo cumplir para convivir bien con los demás','Un permiso para hacer lo que yo quiera','Algo que solo les corresponde a las personas adultas','Un regalo que se recibe en la escuela'],e:'Los deberes son responsabilidades de todas las personas, también de niños y niñas. Cumplirlos permite que los derechos de todos se respeten.'},
+{t:1,l:1,k:'d3',y:'mc',q:'¿Qué institución se encarga de proteger los derechos de las personas menores de edad en Costa Rica?',o:['PANI (Patronato Nacional de la Infancia)','Instituto Meteorológico Nacional','Banco Central','Teatro Nacional'],e:'El PANI protege a niños, niñas y adolescentes. El Instituto Meteorológico Nacional informa sobre el tiempo y el clima; el Banco Central se ocupa de la moneda.'},
+{t:1,l:1,k:'d3',y:'match',q:'Relaciona cada institución con su función.',p:[['PANI','Protege los derechos de la niñez y atiende casos de maltrato'],['MEP / Escuela','Garantiza el derecho a la educación'],['CCSS (EBAIS)','Brinda atención de salud y vacunas'],['911','Atiende emergencias']],e:'Cada institución protege un derecho distinto: protección (PANI), educación (MEP), salud (CCSS) y seguridad en emergencias (911).'},
+{t:1,l:1,k:'d1',y:'tf',q:'Todos los niños y las niñas tienen los mismos derechos, sin importar su sexo, color de piel, país o condición.',a:true,e:'Es verdadero. Los derechos son universales: nadie debe ser discriminado.'},
+{t:1,l:2,k:'d1',y:'match',q:'Relaciona cada situación con el derecho que se ejerce.',p:[['Marta va al EBAIS a vacunarse','Salud'],['Luis juega con sus amigos en el recreo','Juego y recreación'],['Ana aprende a leer en su escuela','Educación'],['A Pedro lo inscribieron con nombre y apellidos','Nombre y nacionalidad']],e:'Identificar el derecho detrás de una situación cotidiana ayuda a reconocer cuándo se está cumpliendo (o no).'},
+{t:1,l:2,k:'d2 d4',y:'mc',q:'Daniel hace sus tareas todos los días y llega puntual a clases. ¿Qué deber está cumpliendo?',o:['Estudiar y ser responsable','Cuidar el ambiente','Colaborar en las tareas del hogar','Respetar a los adultos mayores'],e:'Hacer las tareas y llegar puntual es parte del deber de estudiar y ser responsable. Los otros deberes son válidos, pero no son los que describe la situación.'},
+{t:1,l:2,k:'d3 d1',y:'mc',q:'Una persona adulta nota que una niña sufre maltrato en su casa. ¿A qué institución debe acudir para proteger sus derechos?',o:['Al PANI o al 911','A una tienda del barrio','A un banco','A un gimnasio'],e:'El PANI y el 911 atienden situaciones de maltrato. Denunciar protege el derecho a vivir sin violencia.'},
+{t:1,l:2,k:'d1 d2',y:'match',q:'Relaciona cada derecho con el deber que le corresponde.',p:[['Derecho a la educación','Estudiar y respetar las normas'],['Derecho a un ambiente sano','Cuidar el ambiente y no tirar basura'],['Derecho a opinar','Respetar las opiniones de los demás'],['Derecho a la salud','Cuidar mi higiene y mi alimentación']],e:'Cada derecho trae una responsabilidad: así todos podemos disfrutarlos.'},
+{t:1,l:2,k:'d3',y:'mc',q:'En San Rafael de Coronado, ¿qué instituciones de la comunidad ayudan a que los niños y las niñas ejerzan sus derechos a la educación y a la salud?',o:['La escuela (MEP) y el EBAIS o clínica de la CCSS','Solo la iglesia','Solo los comercios','Ninguna institución'],e:'En la comunidad hay instituciones que garantizan derechos: la escuela (educación) y el EBAIS/CCSS (salud), además de la Municipalidad y el Gobierno Estudiantil en lo que les corresponde.'},
+{t:1,l:3,k:'d1 d2',y:'mc',q:'En el recreo, un grupo no deja jugar a Sofía porque es nueva en la escuela. ¿Qué derecho se irrespeta y qué deber no se cumple?',o:['Su derecho a jugar y a no ser discriminada; el deber de respetar a las demás personas','Su derecho a la salud; el deber de cuidar el ambiente','Su derecho a un nombre; el deber de estudiar','Ningún derecho; es solo un juego'],e:'Excluir a alguien por ser nueva es discriminación: afecta su derecho a la recreación y a un trato igualitario, y rompe el deber de respeto.'},
+{t:1,l:3,k:'d4',y:'mc',q:'¿Por qué es importante cumplir los deberes y no solo exigir los derechos?',o:['Porque los derechos de todos solo se respetan si cada persona cumple sus responsabilidades','Porque los deberes son castigos','Porque los derechos son solo para adultos','No es importante, basta con tener derechos'],e:'Vivimos en comunidad: mi derecho termina donde empieza el de otra persona. Cumplir deberes asegura convivencia justa.'},
+{t:1,l:3,k:'d2 d4',y:'mc',q:'En la escuela el patio tiene basura y las paredes están rayadas. ¿Qué acción cumple deberes y ayuda a que todos disfruten de un ambiente sano?',o:['Organizar con el Gobierno Estudiantil una campaña de limpieza y cuidado','Esperar a que alguien más lo arregle','Rayar también las paredes para que «se vea igual»','Dejar de ir al patio'],e:'Participar activamente demuestra responsabilidad y cuida el derecho colectivo a un ambiente sano.'},
+{t:1,l:3,k:'d1 d4',y:'tf',q:'Si una niña o un niño no cumple uno de sus deberes, pierde automáticamente sus derechos.',a:false,e:'Es falso. Los derechos no se pierden; pero es importante cumplir los deberes para que todos los disfruten y para aprender a convivir.'},
+
+/* ---------- Tema 2: independencia y símbolos ---------- */
+{t:2,l:1,k:'i1',y:'mc',q:'¿En qué año se independizó Centroamérica de España?',o:['1821','1492','1848','1949'],e:'La independencia se proclamó en 1821. 1492 es el encuentro de culturas; 1848 es la creación de la bandera actual; 1949 es la abolición del ejército.'},
+{t:2,l:1,k:'i1',y:'mc',q:'¿Qué fecha celebramos como Día de la Independencia?',o:['15 de setiembre de 1821','12 de octubre de 1492','25 de julio de 1824','1 de diciembre de 1948'],e:'El 15 de setiembre de 1821 se firmó el Acta de Independencia en Guatemala. El 25 de julio es la Anexión del Partido de Nicoya.'},
+{t:2,l:1,k:'i1',y:'mc',q:'¿Por qué Costa Rica se enteró de la independencia semanas después del 15 de setiembre?',o:['Porque las noticias viajaban por correo a caballo o mula por caminos largos','Porque nadie quería saberlo','Porque no había gobierno','Porque se firmó en otro año'],e:'No existían teléfonos ni internet: la noticia llegó a Cartago el 13 de octubre de 1821.'},
+{t:2,l:1,k:'i2',y:'match',q:'Relaciona cada símbolo con su descripción.',p:[['Bandera','Tiene franjas azul, blanca y roja'],['Escudo','Muestra tres volcanes y siete estrellas'],['Himno Nacional','Canción que nos representa en los actos cívicos'],['Guaria morada','Flor nacional'],['Árbol de guanacaste','Árbol nacional'],['Yigüirro','Ave nacional']],e:'Bandera, escudo e himno son símbolos patrios; la guaria morada, el guanacaste y el yigüirro son símbolos naturales.'},
+{t:2,l:1,k:'i1',y:'order',q:'Ordena los hechos de 1821 desde el más antiguo hasta el más reciente.',s:['15 de setiembre: Acta de Independencia en Guatemala','13 de octubre: la noticia llega a Cartago','29 de octubre: Acta de los Nublados','1 de diciembre: Pacto de Concordia'],e:'Primero se firma el Acta en Guatemala, luego llega la noticia, Cartago redacta el Acta de los Nublados y finalmente se firma el Pacto de Concordia.'},
+{t:2,l:2,k:'i1',y:'mc',q:'Antes de 1821, ¿quién gobernaba Costa Rica?',o:['España, por medio de la Capitanía General de Guatemala','Estados Unidos','México','Un presidente costarricense'],e:'Costa Rica era una provincia lejana del imperio español, dependiente de la Capitanía General de Guatemala.'},
+{t:2,l:2,k:'i1',y:'tf',q:'La independencia de Costa Rica se logró después de una larga guerra contra España.',a:false,e:'Es falso. Fue un proceso pacífico: se firmaron actas y acuerdos, sin batallas contra España.'},
+{t:2,l:2,k:'i1',y:'tf',q:'El Pacto de Concordia (1 de diciembre de 1821) fue el primer documento político de Costa Rica independiente.',a:true,e:'Es verdadero. Organizó el gobierno provisional mientras se definía el futuro del país.'},
+{t:2,l:2,k:'i2',y:'match',q:'Relaciona cada elemento con su significado.',p:[['Siete estrellas del escudo','Las siete provincias'],['Dos mares del escudo','Océanos Atlántico y Pacífico'],['Azul de la bandera','Cielo y oportunidades'],['Blanco de la bandera','Paz y sabiduría']],e:'Los símbolos tienen significados que reflejan nuestra historia y valores.'},
+{t:2,l:2,k:'i2 i3',y:'match',q:'Relaciona cada persona con su aporte a los símbolos nacionales.',p:[['Pacífica Fernández','Diseñó la bandera (1848)'],['José María Zeledón (Billo)','Escribió la letra del Himno Nacional'],['Manuel María Gutiérrez','Compuso la música del Himno Nacional']],e:'Conocer a quienes crearon nuestros símbolos fortalece el orgullo nacional.'},
+{t:2,l:2,k:'i3',y:'mc',q:'Cada 14 de setiembre las escuelas hacen un desfile de faroles. ¿Qué significa esta tradición para nuestra identidad?',o:['Recordamos la independencia y fortalecemos el orgullo nacional','Es solo un paseo sin significado','Celebramos el inicio del año escolar','Celebramos una fiesta extranjera'],e:'Las tradiciones cívicas mantienen viva la memoria histórica y la identidad costarricense.'},
+{t:2,l:3,k:'i4',y:'mc',q:'En la escuela se elige el Gobierno Estudiantil con voto secreto. ¿Qué valor de la vida democrática se practica?',o:['Participar y respetar la decisión de la mayoría','Imponer la opinión propia','No opinar nunca','Elegir solo a los amigos sin pensar'],e:'La democracia se vive participando, votando con libertad y aceptando el resultado respetuosamente.'},
+{t:2,l:3,k:'i2 i3',y:'mc',q:'Durante el acto cívico un compañero se burla de la bandera. ¿Cuál es la respuesta más adecuada?',o:['Explicarle con respeto que los símbolos representan nuestra identidad y merecen respeto','Burlarse de él también','Ignorar siempre cualquier falta de respeto','Quitarle la bandera'],e:'Responder con respeto y diálogo promueve el orgullo nacional sin violencia.'},
+{t:2,l:3,k:'i3 i4',y:'mc',q:'¿Por qué conocer la historia de la independencia nos ayuda a ser mejores ciudadanos?',o:['Porque entendemos que la libertad y la democracia se cuidan con la participación de todos','Porque así memorizamos fechas para siempre','Porque la historia no cambia nada','Porque solo importa a los adultos'],e:'Conocer cómo nació el país nos motiva a participar y cuidar lo que heredamos.'},
+{t:2,l:3,k:'i2 i3',y:'mc',q:'¿Qué tienen en común la bandera, el escudo y el himno nacional?',o:['Son símbolos patrios que nos identifican como costarricenses','Son símbolos naturales','Son personajes históricos','Son fiestas cívicas'],e:'Los símbolos patrios representan a todo el país y nos unen como una sola nación.'},
+
+/* ---------- Tema 3: tiempo y clima ---------- */
+{t:3,l:1,k:'c1',y:'mc',q:'El tiempo atmosférico es…',o:['El estado de la atmósfera en un lugar y un momento determinados','El promedio del clima durante 30 años','El calendario de la escuela','Una estación del año'],e:'El tiempo cambia de un día (o una hora) a otra: «hoy está nublado».'},
+{t:3,l:1,k:'c1',y:'mc',q:'El clima es…',o:['El comportamiento promedio del tiempo en un lugar durante muchos años','Lo que sucede hoy en la mañana','La lluvia de esta tarde','La temperatura de ahora'],e:'El clima se obtiene al observar el tiempo durante muchos años (unos 30).'},
+{t:3,l:1,k:'c2',y:'match',q:'Relaciona cada elemento del tiempo con el instrumento que lo mide.',p:[['Temperatura','Termómetro'],['Precipitación (lluvia)','Pluviómetro'],['Viento','Anemómetro'],['Presión atmosférica','Barómetro'],['Humedad','Higrómetro']],e:'Cada elemento del tiempo tiene su instrumento: el termómetro mide la temperatura, el pluviómetro la lluvia, etc.'},
+{t:3,l:1,k:'c2',y:'mc',q:'¿Cuál de las siguientes opciones NO es un elemento del tiempo atmosférico?',o:['Altitud','Temperatura','Humedad','Viento'],e:'La altitud es un factor que influye en el clima, no un elemento del tiempo. Los elementos son temperatura, precipitación, humedad, viento, presión y nubosidad.'},
+{t:3,l:1,k:'c2',y:'tf',q:'La temperatura se mide en grados Celsius (°C) con un termómetro.',a:true,e:'Es verdadero. Por ejemplo, 21 °C indica una temperatura agradable.'},
+{t:3,l:2,k:'c1',y:'match',q:'Clasifica cada situación: ¿describe el tiempo o el clima?',p:[['Hoy llovió fuerte a las 3 p. m.','Tiempo'],['En el Caribe llueve casi todo el año','Clima'],['Esta mañana amaneció con neblina','Tiempo'],['En Guanacaste hay una época seca marcada cada año','Clima'],['Mañana se esperan 22 °C','Tiempo']],e:'Si habla de un momento concreto, es tiempo. Si habla de lo que ocurre normalmente durante años, es clima.'},
+{t:3,l:2,k:'c3',y:'mc',b:FC,q:'Según el pronóstico, ¿qué debe llevar un estudiante de Coronado hoy?',o:['Capa o sombrilla y un suéter','Gorra y bloqueador únicamente','Ropa de playa','Nada especial'],e:'Hay 80 % de lluvia y temperaturas frescas (13–21 °C), por lo que conviene protegerse de la lluvia y abrigarse.'},
+{t:3,l:2,k:'c3',y:'mc',b:FC,q:'¿Qué dato del pronóstico indica que es muy probable que llueva?',o:['Probabilidad de lluvia: 80 %','Viento: 15 km/h','Mínima 13 °C','Máxima 21 °C'],e:'La probabilidad de lluvia (precipitación) es el dato que anuncia agua. El viento y la temperatura son otros elementos.'},
+{t:3,l:2,k:'c3 c2',y:'mc',b:FC,q:'¿Cuándo hace más frío según el pronóstico?',o:['En la madrugada, cuando se registra la mínima de 13 °C','Al mediodía, con la máxima de 21 °C','Cuando sopla viento de 15 km/h','Nunca hace frío'],e:'La temperatura mínima (13 °C) suele darse en la madrugada y la máxima (21 °C) en las horas de más sol.'},
+{t:3,l:2,k:'c3',y:'mc',q:'¿Qué institución nacional informa diariamente el pronóstico del tiempo en Costa Rica?',o:['Instituto Meteorológico Nacional (IMN)','Poder Judicial','Ministerio de Educación Pública','Tribunal Supremo de Elecciones'],e:'El IMN observa y pronostica el tiempo y estudia el clima del país.'},
+{t:3,l:3,k:'c1 c3',y:'mc',q:'Marta ve que hoy llueve en Coronado y dice: «En Coronado llueve todos los días del año». ¿Es correcta su conclusión?',o:['No; un solo día describe el tiempo, y el clima requiere promedios de muchos años','Sí; si hoy llueve, siempre llueve','Sí; el clima y el tiempo son lo mismo','No; en Coronado nunca llueve'],e:'Confundir un día lluvioso (tiempo) con el clima es un error frecuente: el clima se estudia con datos de muchos años.'},
+{t:3,l:3,k:'c3',y:'mc',b:FC3,q:'La escuela quiere hacer una actividad al aire libre. Según el pronóstico, ¿qué día es mejor?',o:['Miércoles: poca probabilidad de lluvia, poco viento y temperatura agradable','Martes: 90 % de lluvia y viento fuerte','Lunes: 60 % de lluvia','Cualquier día es igual'],e:'Se elige el día con menos lluvia (20 %), viento suave y temperatura agradable.'},
+{t:3,l:3,k:'c3',y:'mc',q:'¿Por qué las personas agricultoras consultan el pronóstico del tiempo?',o:['Para decidir cuándo sembrar, regar o cosechar y proteger los cultivos','Para saber la hora','Por entretenimiento solamente','Para elegir su ropa de gala'],e:'Interpretar el tiempo ayuda a decidir actividades económicas y evitar pérdidas.'},
+{t:3,l:3,k:'c1',y:'mc',q:'Los datos de temperatura de un lugar durante 30 años dan un promedio de 17 °C. ¿Qué se está describiendo?',o:['El clima del lugar','El tiempo atmosférico de hoy','Un elemento del viento','El pronóstico de mañana'],e:'Un promedio de muchos años describe el clima.'},
+
+/* ---------- Tema 4: climas de Costa Rica ---------- */
+{t:4,l:1,k:'t1',y:'mc',q:'Costa Rica se ubica en la zona…',o:['Tropical, cerca del ecuador','Polar','Desértica','Fría todo el año'],e:'Estamos en la zona tropical, por eso la temperatura varía más con la altura que con las estaciones.'},
+{t:4,l:1,k:'t2',y:'mc',q:'¿Qué clima predomina en la región Huetar Caribe (Limón)?',o:['Cálido y lluvioso casi todo el año','Frío y seco','Seco todo el año','Nevado'],e:'El Caribe recibe humedad y lluvias durante casi todo el año (tropical húmedo).'},
+{t:4,l:1,k:'t2',y:'mc',q:'¿Qué clima tiene la región Chorotega (Guanacaste)?',o:['Cálido, con una época seca muy marcada','Frío y neblinoso','Lluvioso todo el año','Templado todo el año'],e:'Guanacaste tiene clima tropical seco: pocas lluvias entre diciembre y abril.'},
+{t:4,l:1,k:'t1',y:'mc',q:'¿Qué clima se presenta en las partes más altas de las cordilleras, como el Cerro de la Muerte?',o:['Clima de montaña, frío','Clima cálido','Clima desértico','Clima de playa'],e:'A mayor altura, menor temperatura.'},
+{t:4,l:1,k:'t2',y:'match',q:'Relaciona cada zona con su clima.',p:[['Región Chorotega','Cálido, con época seca marcada'],['Región Huetar Caribe','Cálido y lluvioso casi todo el año'],['Región Central (Valle)','Templado y fresco, con épocas seca y lluviosa'],['Cumbres de cordillera','Frío de montaña']],e:'Cada región socioeconómica tiene características climáticas propias.'},
+{t:4,l:2,k:'t2',y:'mc',q:'San Rafael de Coronado está en la Región Central, en las faldas de la cordillera. ¿Cómo es su clima predominante?',o:['Fresco y húmedo, con neblina y dos épocas definidas','Muy caluroso y seco todo el año','Nevado','Desértico'],e:'La Región Central es templada; en Coronado, por la altitud, es más fresco y con frecuente neblina.'},
+{t:4,l:2,k:'t2',y:'mc',q:'Un estudiante de Liberia (Guanacaste) en marzo, ¿qué debe esperar?',o:['Calor y mucho sol, porque es época seca','Frío intenso','Lluvias todas las tardes','Nieve'],e:'Marzo es mes seco en Guanacaste; se recomienda ropa ligera, hidratación y protección solar.'},
+{t:4,l:2,k:'t2',y:'mc',q:'Una familia viaja de Coronado a Limón. ¿Qué cambios en el clima notará?',o:['Más calor y humedad, con lluvias frecuentes','Mucho más frío','Menos humedad','Ningún cambio'],e:'Limón está a baja altura y recibe humedad del Caribe: es más cálido y lluvioso.'},
+{t:4,l:2,k:'t1',y:'tf',q:'Todo Costa Rica tiene exactamente el mismo clima.',a:false,e:'Es falso. Hay climas distintos según la región, la altura y la cercanía al mar.'},
+{t:4,l:2,k:'t1 t2',y:'mc',q:'¿Por qué el Caribe y la Zona Norte reciben lluvia casi todo el año?',o:['Porque los vientos alisios traen humedad del mar Caribe','Porque están muy lejos del mar','Porque no hay montañas','Porque están en el polo'],e:'Los alisios cargados de humedad chocan con las montañas y generan lluvia.'},
+{t:4,l:3,k:'t2',y:'mc',b:FC2,q:'Analiza la tabla. ¿Cuál lugar corresponde al Caribe y cuál a Guanacaste?',o:['A es el Caribe (mucha lluvia) y B es Guanacaste (época seca marcada)','A es Guanacaste y B es el Caribe','Ambos son del Caribe','Ambos son de Guanacaste'],e:'El Caribe recibe cerca de 4 000 mm de lluvia y casi no tiene meses secos; Guanacaste tiene unos 5 meses secos.'},
+{t:4,l:3,k:'t2',y:'mc',q:'¿Qué recomendación es útil para vivir en Coronado durante la época lluviosa?',o:['Usar impermeable y botas, y tener cuidado con derrumbes en laderas','Vestir ropa de baño','Sembrar en el techo','No hacer nada'],e:'Las lluvias en zonas de ladera pueden causar deslizamientos; hay que prevenir.'},
+{t:4,l:3,k:'t1',y:'mc',q:'Un lugar a 3 000 m de altura tiene 12 °C de promedio y neblinas frecuentes. ¿Qué tipo de clima es?',o:['Clima de montaña, frío','Clima tropical seco','Clima cálido y húmedo de costa','Clima desértico'],e:'Temperatura baja y neblina a gran altura caracterizan el clima de montaña.'},
+{t:4,l:3,k:'t2',y:'mc',q:'¿Qué región podría necesitar más sistemas de riego durante la época seca?',o:['Región Chorotega (Guanacaste)','Huetar Caribe','Cumbres con neblina','Todas igual'],e:'La región Chorotega tiene una época seca muy marcada, por lo que el riego es clave para cultivar.'},
+
+/* ---------- Tema 5: factores y épocas ---------- */
+{t:5,l:1,k:'f1',y:'mc',q:'¿Cuál es un factor que afecta el clima?',o:['La altitud (altura sobre el nivel del mar)','El color de la ropa','La hora del recreo','El nombre del lugar'],e:'Latitud, altitud, relieve, vientos y cercanía al mar son factores que determinan el clima.'},
+{t:5,l:1,k:'f1',y:'mc',q:'Cuando aumenta la altitud, la temperatura generalmente…',o:['Disminuye','Aumenta','No cambia','Se vuelve cero siempre'],e:'Por cada 1 000 m de altura, baja alrededor de 6 °C.'},
+{t:5,l:1,k:'f2',y:'mc',q:'¿Entre qué meses ocurre la época seca en gran parte del país?',o:['Diciembre a abril','Mayo a noviembre','Solo en julio','Solo en octubre'],e:'La época seca va de diciembre a abril; la lluviosa, de mayo a noviembre.'},
+{t:5,l:1,k:'f1',y:'match',q:'Relaciona cada factor con su efecto.',p:[['Latitud','Cerca del ecuador, hace más calor'],['Altitud','Entre más alto, hace más frío'],['Vientos alisios','Traen humedad del Caribe'],['Cercanía al mar','Suaviza la temperatura y aporta humedad']],e:'Estos factores actúan juntos para dar a cada lugar su clima.'},
+{t:5,l:1,k:'f2',y:'tf',q:'En la época seca llueve mucho todos los días.',a:false,e:'Es falso. En época seca llueve poco y hay días soleados con viento.'},
+{t:5,l:2,k:'f2',y:'match',q:'Relaciona cada característica con la época.',p:[['Cielo despejado y poca lluvia','Época seca'],['Lluvias casi todas las tardes','Época lluviosa'],['Ríos crecidos y paisaje muy verde','Época lluviosa'],['Suelo agrietado y ríos con poca agua','Época seca']],e:'Describir las épocas te ayuda a relacionarlas con la vida cotidiana.'},
+{t:5,l:2,k:'f3',y:'match',q:'Relaciona cada actividad con la época en que es más común.',p:[['Corta de caña de azúcar (zafra)','Época seca'],['Siembra de maíz y frijoles','Época lluviosa'],['Vacaciones en la playa','Época seca'],['Riesgo de inundaciones y deslizamientos','Época lluviosa']],e:'Las actividades agrícolas, económicas y recreativas dependen de la disponibilidad de lluvia.'},
+{t:5,l:2,k:'f3',y:'mc',q:'¿Por qué la agricultura depende de las épocas del año?',o:['Porque los cultivos necesitan agua; se siembra cuando empiezan las lluvias','Porque las plantas no necesitan agua','Porque la lluvia daña siempre','Porque todos los cultivos se dan en verano'],e:'Sembrar al comenzar la época lluviosa asegura agua para el crecimiento.'},
+{t:5,l:2,k:'f1',y:'mc',q:'¿Por qué el lado caribeño de las montañas recibe más lluvia?',o:['Los vientos húmedos chocan con la montaña, suben, se enfrían y forman lluvia','Porque no hay nubes','Porque hay desierto','Porque la lluvia viene del suelo'],e:'El relieve fuerza al aire húmedo a subir y condensarse.'},
+{t:5,l:2,k:'f1',y:'mc',q:'Dos lugares están a la misma latitud: uno a 100 m y otro a 3 000 m de altura. ¿Cuál es más frío?',o:['El de 3 000 m','El de 100 m','Ambos igual','Depende solo del nombre'],e:'La altitud hace que el aire sea más frío.'},
+{t:5,l:3,k:'f1',y:'mc',q:'Dos ciudades están a la misma latitud; la primera está a 1 500 m y registra 18 °C, y la segunda está a 50 m y registra 30 °C. ¿Qué factor explica la diferencia?',o:['La altitud','La hora del día','El idioma','La cantidad de personas'],e:'La diferencia de altura causa la diferencia de temperatura.'},
+{t:5,l:3,k:'f2 f3',y:'mc',q:'Una comunidad del Pacífico Norte planea un festival al aire libre. ¿Cuándo es más seguro realizarlo?',o:['En época seca (diciembre a abril)','En plena época lluviosa','Durante una tormenta','No importa la época'],e:'En época seca hay menos riesgo de lluvia fuerte.'},
+{t:5,l:3,k:'f1 f3',y:'mc',q:'Si se talan los bosques de una montaña, ¿cómo puede afectar a la comunidad?',o:['Hay más erosión y deslizamientos, y se pierde humedad','Mejora el clima automáticamente','No pasa nada','Aumentan las nubes'],e:'Los bosques protegen el suelo y regulan la humedad.'},
+{t:5,l:3,k:'f2 f3',y:'mc',q:'Un productor de arroz decide sembrar al iniciar la época seca, sin riego. ¿Qué problema puede enfrentar?',o:['Le faltará agua para los cultivos','Tendrá demasiada lluvia','No tendrá sol','Nada, el arroz no necesita agua'],e:'Sin lluvia ni riego, las plantas no se desarrollan bien.'},
+{t:5,l:3,k:'f1',y:'mc',q:'¿Qué factores hacen que Coronado sea más fresco que Puntarenas?',o:['Su mayor altitud y su relieve montañoso','Estar más cerca del ecuador','Tener menos árboles','Estar más cerca del mar'],e:'En Coronado, la altura y las montañas enfrían el aire.'},
+
+/* ---------- Tema 6: cambio climático ---------- */
+{t:6,l:1,k:'g1',y:'mc',q:'El cambio climático es…',o:['Un cambio duradero en las temperaturas y los patrones del clima de la Tierra','Un cambio del tiempo de un día a otro','Un cambio de estación en un solo año','Un cambio de uniforme'],e:'El cambio climático se refiere a transformaciones de largo plazo, no a un día soleado o lluvioso.'},
+{t:6,l:1,k:'g2',y:'mc',q:'El calentamiento global es…',o:['El aumento gradual de la temperatura promedio del planeta','El calor de un día de verano','La temperatura de un horno','El invierno en Europa'],e:'Se mide en promedios durante años.'},
+{t:6,l:1,k:'g1',y:'mc',q:'¿Cuál es una de las principales causas del cambio climático?',o:['Quema de combustibles fósiles y deforestación','Sembrar árboles','Ahorrar energía','Reciclar'],e:'Estas actividades liberan gases de efecto invernadero y reducen los árboles que absorben CO₂.'},
+{t:6,l:1,k:'g3 g4 g5',y:'match',q:'Relaciona cada fenómeno con su descripción.',p:[['El Niño','Calentamiento del Pacífico; en Costa Rica trae sequías'],['La Niña','Enfriamiento del Pacífico; trae más lluvias e inundaciones'],['Capa de ozono','Protege de los rayos ultravioleta del sol']],e:'El Niño y La Niña son fenómenos naturales cíclicos; la capa de ozono es la protección contra los rayos UV.'},
+{t:6,l:1,k:'g5',y:'tf',q:'La capa de ozono nos protege de los rayos ultravioleta del sol.',a:true,e:'Es verdadero. Si se destruye, aumentan quemaduras, problemas de vista y daños a plantas y animales.'},
+{t:6,l:2,k:'g5 g1',y:'mc',q:'¿Qué sustancias, usadas en algunos aerosoles y refrigeradores antiguos, dañan la capa de ozono?',o:['Los CFC','El agua','El oxígeno','El maíz'],e:'Los CFC fueron prohibidos por acuerdos internacionales como el Protocolo de Montreal.'},
+{t:6,l:2,k:'g1 g2',y:'match',q:'Relaciona cada actividad humana con su efecto.',p:[['Quemar gasolina y diésel','Más CO₂ y más calentamiento'],['Talar bosques','Hay menos árboles que absorban CO₂'],['Usar aerosoles con CFC','Adelgaza la capa de ozono'],['Calentamiento de los océanos','Corales blanqueados']],e:'Las actividades humanas intensifican los problemas ambientales.'},
+{t:6,l:2,k:'g3 g7',y:'mc',q:'Durante un año con fenómeno de El Niño, ¿qué consecuencia es más probable en Guanacaste?',o:['Sequía, con pérdida de cosechas y falta de agua para el ganado','Inundaciones por lluvias excesivas','Nevadas','Ninguna consecuencia'],e:'El Niño reduce las lluvias en el Pacífico costarricense.'},
+{t:6,l:2,k:'g4 g7',y:'mc',q:'Durante La Niña, ¿qué consecuencia es más común en Costa Rica?',o:['Lluvias más fuertes de lo normal, con inundaciones y deslizamientos','Sequías prolongadas','Heladas','Nevadas'],e:'La Niña aumenta la lluvia, sobre todo en el Pacífico.'},
+{t:6,l:2,k:'g6 g2',y:'mc',q:'¿Cuál es una consecuencia del calentamiento global en los ecosistemas?',o:['Derretimiento de glaciares y pérdida de hábitat de especies','Más hielo en todos lados','Más animales en todos los hábitats','Ninguna'],e:'El calor derrite hielo y modifica los hábitats.'},
+{t:6,l:2,k:'g5 g7',y:'mc',q:'¿Qué consecuencia tiene para las personas el adelgazamiento de la capa de ozono?',o:['Más riesgo de quemaduras de piel y problemas en la vista','Más apetito','Más lluvias','Mejor salud'],e:'Llegan más rayos ultravioleta a la superficie, por eso es importante usar bloqueador y gorra.'},
+{t:6,l:3,k:'g7 g1',y:'mc',q:'¿Qué acción ayuda a reducir el cambio climático en la escuela y la comunidad?',o:['Sembrar árboles, reciclar, ahorrar energía y usar menos plástico','Dejar luces y aparatos encendidos','Quemar basura','Talar árboles'],e:'Acciones diarias reducen gases de efecto invernadero y protegen los ecosistemas.'},
+{t:6,l:3,k:'g1 g7',y:'mc',q:'Una familia usa siempre el carro con un solo pasajero. ¿Qué alternativa disminuiría su impacto?',o:['Compartir el vehículo, usar transporte público o la bicicleta','Usar más vehículos','Encender el motor más rato','Quemar llantas'],e:'Menos combustible quemado significa menos gases de efecto invernadero.'},
+{t:6,l:3,k:'g7 g2',y:'mc',q:'Pablo dice: «El cambio climático no nos afecta porque en Coronado hace fresco». ¿Cómo corriges su idea?',o:['Es un fenómeno global: puede alterar las lluvias, aumentar deslizamientos y afectar el agua y los cultivos también en Coronado','Tiene razón: solo afecta al ecuador','Solo afecta a los países ricos','No existe'],e:'El cambio climático afecta a todo el planeta y a todas las comunidades, aunque de maneras distintas.'},
+{t:6,l:3,k:'g3 g4 g2',y:'tf',q:'El Niño, La Niña y el calentamiento global son exactamente lo mismo.',a:false,e:'Es falso. El Niño y La Niña son fenómenos naturales y cíclicos; el calentamiento global es un aumento de largo plazo causado principalmente por actividades humanas.'},
+{t:6,l:3,k:'g1 g2',y:'order',q:'Ordena la cadena que explica el calentamiento global.',s:['Se queman combustibles y se talan bosques','Aumentan los gases de efecto invernadero','La Tierra retiene más calor','Sube la temperatura y cambian las lluvias'],e:'Las causas llevan a consecuencias en cadena: más gases, más calor y cambios en el clima.'},
+{t:6,l:3,k:'g6 g2',y:'mc',q:'Un arrecife de coral se vuelve blanco porque el agua del mar está más caliente. ¿Qué consecuencia tiene en el ecosistema?',o:['Muere el coral y los peces pierden su hogar y alimento','Los peces aumentan','El mar se enfría','Nada cambia'],e:'Los corales sostienen la vida marina; si mueren, se afecta toda la cadena alimentaria y la pesca.'},
+
+/* ---------- Tema 7: 12 de octubre ---------- */
+{t:7,l:1,k:'e1',y:'mc',q:'El 12 de octubre se conmemora…',o:['El encuentro de culturas (llegada de Colón a América en 1492)','La Independencia de Costa Rica','El Día del Ambiente','La abolición del ejército'],e:'El 12 de octubre de 1492 comenzó el contacto entre pueblos de Europa y de América.'},
+{t:7,l:1,k:'e1 e2',y:'mc',q:'¿Qué culturas se encontraron o mezclaron en América?',o:['Pueblos indígenas, europeos y, más tarde, africanos','Solo europeos','Solo asiáticos','Ninguna'],e:'Con el tiempo se formó una gran diversidad cultural con aportes de varios pueblos.'},
+{t:7,l:1,k:'e1',y:'mc',q:'¿Cómo se llamaba antes en Costa Rica el 12 de octubre?',o:['Día de la Raza','Día de la Madre','Día del Ambiente','Día de la Bandera'],e:'Se cambió a Día de las Culturas para reconocer la diversidad y el respeto a todas las culturas.'},
+{t:7,l:1,k:'e2 e3',y:'match',q:'Relaciona cada aporte con el pueblo que lo realizó.',p:[['Maíz y cacao','Pueblos indígenas'],['Caballos, trigo y caña de azúcar','Europeos'],['Idioma español','Europeos'],['Tambores y ritmos como el calipso','Africanos']],e:'La cultura costarricense es mezcla de muchos aportes.'},
+{t:7,l:1,k:'e1',y:'tf',q:'Antes de 1492 América estaba deshabitada.',a:false,e:'Es falso. Ya vivían muchos pueblos indígenas con sus culturas.'},
+{t:7,l:2,k:'e2 e3 e4',y:'match',q:'Relaciona cada cambio con el aspecto al que pertenece.',p:[['El español se vuelve el idioma principal y llegan palabras como «chocolate»','Lingüístico'],['El maíz y la papa viajan a Europa, y el trigo llega a América','Alimentario'],['Se empieza a comerciar entre continentes','Económico'],['Se mezclan creencias, fiestas, música y costumbres','Social y cultural']],e:'El encuentro de culturas produjo cambios en el idioma, la alimentación, la economía y la sociedad.'},
+{t:7,l:2,k:'e3',y:'mc',q:'¿Qué alimentos llegaron desde Europa?',o:['Trigo, ganado vacuno y cerdos','Maíz y cacao','Papa y tomate','Chile y yuca'],e:'Maíz, cacao, papa y tomate eran alimentos de América.'},
+{t:7,l:2,k:'e2',y:'mc',q:'¿Cuál fue una consecuencia difícil del encuentro de culturas para los pueblos indígenas?',o:['Enfermedades nuevas, pérdida de tierras y trabajo forzado','Fiestas gratuitas','Más tierras para los indígenas','Ninguna'],e:'Hubo también consecuencias negativas que debemos reconocer.'},
+{t:7,l:2,k:'e3',y:'mc',q:'¿Cuál es un aporte indígena importante?',o:['El cultivo de maíz, frijol y cacao','El caballo','La imprenta','Las armas de fuego'],e:'Los pueblos indígenas cultivaban y conocían plantas útiles.'},
+{t:7,l:2,k:'e3 e4',y:'mc',q:'El tamal combina masa de maíz con carne de cerdo. ¿Qué muestra este alimento?',o:['La mezcla de aportes indígenas y europeos','Que solo hay una cultura','Que no hubo mezcla','Que es solo africano'],e:'El maíz es indígena y el cerdo, europeo: nuestra comida refleja el encuentro de culturas.'},
+{t:7,l:2,k:'e1',y:'tf',q:'Cristóbal Colón llegó a la costa de Costa Rica en su cuarto viaje, en 1502.',a:true,e:'Es verdadero. Colón arribó cerca de la actual Limón en 1502.'},
+{t:7,l:3,k:'e5 e1',y:'mc',q:'¿Qué significa decir «encuentro de culturas» en lugar de «descubrimiento»?',o:['Que ya vivían pueblos con su propia cultura y hubo un intercambio con cambios positivos y negativos','Que América estaba vacía','Que solo llegó una cultura','Que todo fue pacífico'],e:'La expresión «encuentro de culturas» reconoce a todos los pueblos que participaron.'},
+{t:7,l:3,k:'e5',y:'mc',q:'En tu clase hay compañeros con costumbres distintas. ¿Qué actitud demuestra respeto a la diversidad cultural?',o:['Escuchar, aprender y valorar sus tradiciones sin burlarse','Ignorarlos','Burlarse','Obligarlos a cambiar'],e:'El respeto y la curiosidad sana fortalecen la convivencia.'},
+{t:7,l:3,k:'e2 e4',y:'mc',q:'¿Qué ejemplo muestra la herencia de varias culturas en la identidad costarricense?',o:['El idioma español, los alimentos con maíz y la música con ritmos africanos como el calipso','Solo el español','Solo la música','Ninguno'],e:'Nuestra identidad es el resultado de la mezcla de lenguas, comidas y músicas.'},
+{t:7,l:3,k:'e5 e2',y:'mc',q:'¿Por qué es importante conocer y estudiar el encuentro de culturas?',o:['Para valorar la diversidad, comprender nuestra identidad y evitar la discriminación','Para memorizar solo fechas','Para olvidar el pasado','No es importante'],e:'Comprender el pasado nos ayuda a convivir mejor hoy.'}
+];
+(()=>{const n={};QS.forEach(q=>{n[q.t]=(n[q.t]||0)+1;q.id='t'+q.t+'-'+n[q.t];q.kk=q.k.split(' ')})})();
+
+/* =========================================================
+   3. ESTADO Y UTILIDADES
+   ========================================================= */
+const KEY='as4tomep_2026_v1';
+const S={p:{name:'Coco',bones:0,prog:{},fs:1,hc:false,sims:[]},session:null};
+try{Object.assign(S.p,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S.p))}catch(e){}};
+const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const topic=id=>TOPICS.find(t=>t.id==id);
+const pct=n=>Math.round(n*100);
+const EXAM=new Date(2026,10,12);
+const daysLeft=()=>{const t=new Date();t.setHours(0,0,0,0);return Math.round((EXAM-t)/864e5)};
+const ACC=[[0,''],[20,'🎀'],[60,'🎩'],[120,'🕶️'],[200,'👑']];
+const accessory=()=>ACC.filter(a=>S.p.bones>=a[0]).pop()[1];
+const petLevel=()=>Math.floor(S.p.bones/40)+1;
+const TIPS=['Lee con calma: la respuesta suele estar en la pregunta.','Descarta primero las opciones que sabes que están mal.','Un minuto de respiración profunda ayuda a concentrarte.','Repasar un ratito cada día funciona mejor que todo en una sola noche.','Si te equivocas, ¡aprendiste algo nuevo!','Explícale el tema a alguien: así lo recuerdas mejor.'];
+const progTopic=id=>{const qs=QS.filter(q=>q.t==id);const ok=qs.filter(q=>S.p.prog[q.id]&&S.p.prog[q.id].ok).length;return {ok,n:qs.length,p:ok/qs.length}};
+
+function applyPrefs(){
+  document.documentElement.style.setProperty('--fs',S.p.fs);
+  document.body.classList.toggle('hc',!!S.p.hc);
+  $('#hcBtn').setAttribute('aria-pressed',!!S.p.hc);
+  $('#bones').textContent='🦴 '+S.p.bones;
+}
+function speak(text){
+  try{const u=new SpeechSynthesisUtterance(text);u.lang='es-CR';speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}
+}
+const plain=h=>{const d=document.createElement('div');d.innerHTML=h;return d.textContent};
+
+/* =========================================================
+   4. VISTAS
+   ========================================================= */
+const app=$('#app');
+function mount(html,title){app.innerHTML=html;document.title=(title?title+' · ':'')+'Aventura Sociales 4.°';window.scrollTo(0,0);const h=app.querySelector('h1,h2');if(h){h.setAttribute('tabindex','-1');h.focus({preventScroll:true})}applyPrefs()}
+
+function viewHome(){
+  const d=daysLeft();
+  const exam=d>0?`⏳ Faltan <b>${d} día${d>1?'s':''}</b> para la Segunda Prueba (jueves 12 de noviembre)`:d===0?'📝 ¡Hoy es la Segunda Prueba! Tú puedes.':'📝 La Segunda Prueba ya se aplicó. ¡Sigue repasando!';
+  const next=ACC.find(a=>a[0]>S.p.bones);
+  const tot=QS.length,okAll=QS.filter(q=>S.p.prog[q.id]&&S.p.prog[q.id].ok).length;
+  mount(`
+  <section class="scene" aria-label="Tu cachorro">
+    <div class="sun" aria-hidden="true"></div><div class="cloud c1" aria-hidden="true"></div><div class="cloud c2" aria-hidden="true"></div><div class="hill" aria-hidden="true"></div>
+    <div class="scene-in">
+      <div class="hello">
+        <h1>¡Hola! Soy ${esc(S.p.name)} 🐾</h1>
+        <p class="bubble" id="bubble" role="status">${exam}. ¡Practiquemos juntos y ganemos huesitos!</p>
+        <p style="margin-top:1.1rem"><label class="petname">Mi cachorro se llama <input id="petName" maxlength="14" value="${esc(S.p.name)}" aria-label="Nombre de tu cachorro"></label></p>
+      </div>
+      <div class="petwrap">
+        <button class="pet" id="pet" aria-label="Acariciar a ${esc(S.p.name)}"><span aria-hidden="true">${petLevel()>2?'🐕':'🐶'}<span class="acc">${accessory()}</span></span></button>
+        <div class="pill" style="margin:.5rem auto .9rem;display:inline-block">Nivel ${petLevel()} · 🦴 ${S.p.bones}</div>
+      </div>
+    </div>
+  </section>
+  <p class="muted" style="text-align:center;margin:.8rem 0 0">${next?`Con ${next[0]} huesitos, ${esc(S.p.name)} gana ${next[1]} ·`:'¡Tu cachorro ya tiene todos los accesorios! ·'} Has dominado <b>${okAll}</b> de <b>${tot}</b> ítems.</p>
+
+  <h2 style="margin-top:1.4rem">🗺️ Elige un mundo</h2>
+  <p class="muted">Ruta recomendada en cada mundo: <b>1 Conocer → 2 Aplicar → 3 Analizar</b>. Estudia primero la guía y luego practica.</p>
+  <div class="grid g3">${TOPICS.map(t=>{const p=progTopic(t.id);const c=[1,2,3].map(l=>QS.filter(q=>q.t==t.id&&q.l==l).length);
+    return `<article class="card world" style="border-color:${t.bg}">
+      <div class="row"><span class="ico" style="background:${t.bg}" aria-hidden="true">${t.emoji}</span><div><h3>${t.name}</h3><span class="chip">${t.ae}</span></div></div>
+      <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct(p.p)}" aria-label="Progreso en ${t.name}"><span style="width:${pct(p.p)}%"></span></div>
+      <span class="muted" style="font-size:.88rem">${p.ok} de ${p.n} ítems dominados</span>
+      <a class="btn warm sm" href="#/study/${t.id}">📖 Guía de estudio</a>
+      <div class="stages">${[1,2,3].map(l=>`<button class="btn sm" data-act="stage" data-t="${t.id}" data-l="${l}" aria-label="${t.name}: nivel ${l} ${LEVELS[l].n}, ${c[l-1]} ítems">${l}. ${LEVELS[l].e} ${LEVELS[l].n}</button>`).join('')}</div>
+    </article>`}).join('')}</div>
+
+  <h2 style="margin-top:1.6rem">🏆 Retos especiales</h2>
+  <div class="grid g3">
+    <article class="card"><h3>📝 Simulacro de la Segunda Prueba</h3><p>${simSpec().n} ítems mezclados de <b>todos</b> los temas, sin pistas hasta el final de cada pregunta. Incluye nivel de desempeño y diagnóstico por tema.</p><button class="btn green" data-act="sim">Empezar simulacro</button>${S.p.sims.length?`<p class="muted" style="margin:.6rem 0 0">Mejor resultado: <b>${Math.max(...S.p.sims)} %</b></p>`:''}</article>
+    <article class="card"><h3>🔁 Refuerzo de errores</h3><p>Practica solo los ítems que has fallado para convertirlos en fortalezas.</p><button class="btn lav" data-act="review">Repasar mis errores (${QS.filter(q=>S.p.prog[q.id]&&!S.p.prog[q.id].ok).length})</button></article>
+    <article class="card"><h3>✅ Auditoría de cobertura</h3><p>Comprueba que cada indicador y subpunto del temario tiene ítems en los tres niveles.</p><a class="btn ghost" href="#/audit">Ver auditoría</a></article>
+  </div>
+  <p style="text-align:center;margin-top:1.4rem"><button class="btn ghost sm" data-act="reset">Reiniciar mi progreso</button></p>`);
+}
+
+function viewStudy(id){
+  const t=topic(id);if(!t)return go('#/');
+  const pv=TOPICS[(TOPICS.indexOf(t)+TOPICS.length-1)%TOPICS.length],nx=TOPICS[(TOPICS.indexOf(t)+1)%TOPICS.length];
+  mount(`<a href="#/" class="btn ghost sm">← Inicio</a>
+  <h1 style="margin-top:1rem">${t.emoji} ${t.name}</h1>
+  <p class="card study" style="background:var(--butter);color:var(--butter-d)"><b>🎯 Indicador (${t.ae}):</b> ${t.ind}</p>
+  <section class="study" aria-label="Contenido de estudio">${t.study}</section>
+  <h2 style="margin-top:1.4rem">¡A practicar!</h2>
+  <div class="stages" style="max-width:560px">${[1,2,3].map(l=>`<button class="btn" data-act="stage" data-t="${t.id}" data-l="${l}">${l}. ${LEVELS[l].e} ${LEVELS[l].n}</button>`).join('')}</div>
+  <p style="margin-top:1.4rem" class="row"><a class="btn ghost sm" href="#/study/${pv.id}">← ${pv.name}</a><a class="btn ghost sm" href="#/study/${nx.id}">${nx.name} →</a><button class="btn ghost sm" data-act="listenStudy">🔊 Escuchar guía</button></p>`,t.name);
+}
+
+/* ---------- Sesiones de práctica ---------- */
+function startSession(o){
+  if(!o.qs.length){alert('¡No hay ítems para repasar todavía!');return go('#/')}
+  S.session={...o,i:0,score:0,res:[],cur:null,done:false};
+  go('#/quiz');
+}
+function simSpec(){return {perTopic:{1:1,2:2,3:2,4:1},n:7*4}}
+function buildSim(){
+  const out=[];
+  TOPICS.forEach(t=>{[[1,1],[2,2],[3,1]].forEach(([l,k])=>{out.push(...shuffle(QS.filter(q=>q.t==t.id&&q.l==l)).slice(0,k))})});
+  return shuffle(out);
+}
+function prep(q){
+  const c={q,sel:null,checked:false};
+  if(q.y==='mc')c.opts=shuffle(q.o.map((t,i)=>({t,ok:i===0})));
+  if(q.y==='match'){c.choices=shuffle([...new Set(q.p.map(p=>p[1]))]);c.rows=shuffle(q.p.map((p,i)=>i));c.sel={}}
+  if(q.y==='order'){let a;do{a=shuffle(q.s)}while(a.join()===q.s.join());c.arr=a}
+  return c;
+}
+function viewQuiz(){
+  const s=S.session;if(!s)return go('#/');
+  if(s.done)return viewResults();
+  const q=s.qs[s.i];s.cur=prep(q);const c=s.cur;const t=topic(q.t);
+  let body='';
+  if(q.y==='mc')body=`<fieldset><legend class="sr">Elige una respuesta</legend>${c.opts.map((o,i)=>`<label class="opt"><input type="radio" name="a" value="${i}"><span>${o.t}</span><span class="tag"></span></label>`).join('')}</fieldset>`;
+  if(q.y==='tf')body=`<fieldset><legend class="sr">Verdadero o falso</legend>${[['true','✅ Verdadero'],['false','❌ Falso']].map(([v,l])=>`<label class="opt"><input type="radio" name="a" value="${v}"><span>${l}</span><span class="tag"></span></label>`).join('')}</fieldset>`;
+  if(q.y==='match')body=c.rows.map(i=>`<div class="mrow" data-row="${i}"><label for="m${i}">${q.p[i][0]}</label><select id="m${i}" data-i="${i}"><option value="">— Elige —</option>${c.choices.map(x=>`<option>${x}</option>`).join('')}</select><div class="fbk" aria-live="polite"></div></div>`).join('');
+  if(q.y==='order')body=`<p class="muted" style="margin:0">Usa los botones ▲ ▼ para ordenar.</p><ol class="order" id="ord">${ordHtml(c.arr)}</ol>`;
+  mount(`<div class="qtop"><button class="btn ghost sm" data-act="exit">← Salir</button>
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="${s.qs.length}" aria-valuenow="${s.i}" aria-label="Progreso"><span style="width:${s.i/s.qs.length*100}%"></span></div>
+    <b aria-label="Pregunta ${s.i+1} de ${s.qs.length}">${s.i+1}/${s.qs.length}</b></div>
+  <article class="card qcard">
+    <div class="row"><span class="chip">${t.emoji} ${t.name}</span><span class="chip b">${LEVELS[q.l].e} ${LEVELS[q.l].n}</span>${s.mode==='sim'?'<span class="chip g">Simulacro</span>':''}</div>
+    <h2 class="qtext" id="qtext">${q.q}</h2>${q.b||''}
+    <form id="qform" onsubmit="return false" aria-labelledby="qtext">${body}</form>
+    <div class="actions"><button class="btn green" data-act="check" id="checkBtn" ${q.y==='order'?'':'disabled'}>Comprobar</button><button class="btn ghost sm" data-act="listen">🔊 Escuchar</button></div>
+    <div id="fb" aria-live="polite" role="status"></div>
+  </article>`,t.name);
+  app.querySelector('h2').removeAttribute('tabindex');
+}
+const ordHtml=a=>a.map((x,i)=>`<li data-i="${i}"><span class="n">${i+1}</span><span class="tx">${x}</span><button class="icon-btn" data-act="up" data-i="${i}" aria-label="Subir: ${esc(plain(x))}" ${i==0?'disabled':''}>▲</button><button class="icon-btn" data-act="down" data-i="${i}" aria-label="Bajar: ${esc(plain(x))}" ${i==a.length-1?'disabled':''}>▼</button></li>`).join('');
+
+function readyCheck(){
+  const c=S.session.cur,q=c.q;let ok=false;
+  if(q.y==='mc'||q.y==='tf')ok=!!app.querySelector('input[name=a]:checked');
+  else if(q.y==='match')ok=[...app.querySelectorAll('select')].every(s=>s.value);
+  else ok=true;
+  $('#checkBtn').disabled=!ok||c.checked;
+}
+function check(){
+  const s=S.session,c=s.cur,q=c.q;if(c.checked)return;c.checked=true;
+  let frac=0,rev='';
+  if(q.y==='mc'||q.y==='tf'){
+    const v=app.querySelector('input[name=a]:checked').value;
+    const labs=[...app.querySelectorAll('.opt')];
+    labs.forEach((l,i)=>{const inp=l.querySelector('input');inp.disabled=true;
+      const isOk=q.y==='mc'?c.opts[i].ok:(inp.value===String(q.a));
+      if(isOk){l.classList.add('ok');l.querySelector('.tag').textContent='✔ Correcta'}
+      if(inp.checked&&!isOk){l.classList.add('bad');l.querySelector('.tag').textContent='✖ Tu respuesta'}});
+    const chosenOk=q.y==='mc'?c.opts[+v].ok:(v===String(q.a));
+    frac=chosenOk?1:0;
+    if(!chosenOk){const right=q.y==='mc'?q.o[0]:(q.a?'Verdadero':'Falso');rev=`<div class="rev">La respuesta correcta es: <b>${right}</b></div>`}
   }
-
-  /* ---------- state ---------- */
-  var STORAGE_KEY = 'mision-regiones-cr-v1';
-  var TOTAL_SCORED = 12; // 3 seleccion + 5 cabeceras + 4 pareo
-  var state = load();
-
-  function load(){
-    try{
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if(raw) return JSON.parse(raw);
-    }catch(e){}
-    return { correctFirstTry:{}, completed:{} };
+  if(q.y==='match'){
+    let n=0;app.querySelectorAll('.mrow').forEach(r=>{const i=+r.dataset.row,sel=r.querySelector('select');sel.disabled=true;
+      const ok=sel.value===q.p[i][1];if(ok)n++;r.classList.add(ok?'ok':'bad');
+      r.querySelector('.fbk').textContent=ok?'✔ Correcto':'✖ Correcta: '+q.p[i][1]});
+    frac=n/q.p.length;
   }
-  function save(){
-    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+  if(q.y==='order'){
+    let n=0;app.querySelectorAll('#ord li').forEach((li,i)=>{const ok=c.arr[i]===q.s[i];if(ok)n++;li.classList.add(ok?'ok':'bad');li.querySelectorAll('button').forEach(b=>b.disabled=true)});
+    frac=n/q.s.length;
+    if(frac<1)rev=`<div class="rev">Orden correcto:<ol style="margin:.3rem 0 0">${q.s.map(x=>`<li>${x}</li>`).join('')}</ol></div>`;
   }
+  const full=frac===1,part=frac>0&&!full;
+  s.score+=frac;s.res.push({id:q.id,t:q.t,frac});
+  const pr=S.p.prog[q.id]||{tries:0,ok:false};pr.tries++;
+  let gain=0;if(full){gain=pr.ok?1:3;pr.ok=true}else if(part)gain=1;else pr.ok=pr.ok&&false;
+  S.p.prog[q.id]=pr;S.p.bones+=gain;save();$('#bones').textContent='🦴 '+S.p.bones;
+  const head=full?'🎉 ¡Muy bien!':part?'🌈 ¡Vas por buen camino!':'🧡 ¡Casi! Aprendamos juntos';
+  const last=s.i===s.qs.length-1;
+  $('#fb').innerHTML=`<div class="fb ${full?'ok':'bad'}"><h3>${head} ${gain?`<span class="chip b">+${gain} 🦴</span>`:''}</h3>${rev}<p style="margin:.2rem 0"><b>${full?'¿Por qué es correcto?':'Explicación:'}</b> ${q.e}</p>${!full?`<p style="margin:.4rem 0 0"><a href="#/study/${q.t}" data-act="studyNow">📖 Repasar ${topic(q.t).name}</a></p>`:''}
+  <div class="actions"><button class="btn warm" data-act="next" id="nextBtn">${last?'Ver resultados 🏁':'Siguiente ➜'}</button></div></div>`;
+  $('#checkBtn').disabled=true;$('#nextBtn').focus();
+}
+function next(){const s=S.session;s.i++;if(s.i>=s.qs.length){s.done=true;if(s.mode==='sim'){S.p.sims.push(pct(s.score/s.qs.length));save()}}viewQuiz()}
 
-  function score(){
-    return Object.keys(state.correctFirstTry).length;
-  }
-  function completedCount(){
-    return Object.keys(state.completed).length;
-  }
+function levelOf(p){return p>=85?['Avanzado','🌟','Dominas muy bien el tema. ¡Sigue así!','g']:p>=60?['Intermedio','🌈','Vas muy bien; refuerza los detalles que fallaste.','b']:['Inicial','🌱','Aún estás comenzando: lee la guía de estudio y vuelve a practicar.','p']}
+function viewResults(){
+  const s=S.session,p=pct(s.score/s.qs.length),lv=levelOf(p);
+  const stars=p>=85?3:p>=60?2:1;
+  const byT={};s.res.forEach(r=>{(byT[r.t]=byT[r.t]||[]).push(r.frac)});
+  const weak=Object.keys(byT).filter(t=>byT[t].reduce((a,b)=>a+b,0)/byT[t].length<.7);
+  if(S.p.bones<0)S.p.bones=0;
+  mount(`<section class="card" style="text-align:center"><h1>${lv[1]} ¡Terminaste: ${esc(s.title)}!</h1>
+   <div class="stars" aria-label="${stars} de 3 estrellas">${'⭐'.repeat(stars)}${'☆'.repeat(3-stars)}</div>
+   <div class="big">${p} %</div><p><span class="chip ${lv[3]}">Nivel de desempeño: ${lv[0]}</span></p><p>${lv[2]}</p>
+   <p class="muted">Obtuviste ${s.score.toFixed(1).replace('.0','')} de ${s.qs.length} puntos. ${esc(S.p.name)} está orgulloso de ti 🐾</p></section>
+   <section class="card" style="margin-top:1rem"><h2>📊 Resultados por tema</h2>${Object.keys(byT).map(t=>{const a=byT[t],v=pct(a.reduce((x,y)=>x+y,0)/a.length);return `<div class="bar"><span>${topic(t).emoji} ${topic(t).name}</span><div class="meter" aria-hidden="true"><span style="width:${v}%"></span></div><b>${v} %</b></div>`}).join('')}
+   ${weak.length?`<div class="tip">📖 Te recomiendo repasar: ${weak.map(t=>`<a href="#/study/${t}">${topic(t).name}</a>`).join(' · ')}</div>`:'<div class="tip">🎯 ¡Ningún tema en rojo! Sigue repasando para mantenerlo.</div>'}</section>
+   <div class="actions" style="justify-content:center;margin-top:1.2rem"><button class="btn green" data-act="again">🔁 Intentar de nuevo</button><a class="btn ghost" href="#/">🏠 Inicio</a></div>
+   <p class="muted" style="text-align:center">Escala de referencia: Avanzado ≥ 85 % · Intermedio 60–84 % · Inicial &lt; 60 %.</p>`,'Resultados');
+}
 
-  /* ---------- trajectory / status bar ---------- */
-  var track = document.getElementById('track');
-  var trackFill = document.getElementById('trackFill');
-  var STATIONS = 6;
-  var nodes = [];
-  (function buildTrack(){
-    for(var i=0;i<STATIONS;i++){
-      var n = document.createElement('div');
-      n.className='node';
-      var pct = 8 + (i/(STATIONS-1))*84;
-      n.style.left = pct+'%';
-      track.appendChild(n);
-      nodes.push(n);
-    }
-    var rocket = document.createElement('div');
-    rocket.className='rocket';
-    rocket.id='rocketEl';
-    rocket.textContent='🚀';
-    rocket.style.left='8%';
-    track.appendChild(rocket);
-  })();
+/* ---------- Auditoría de cobertura ---------- */
+function viewAudit(){
+  const cnt=(f)=>QS.filter(f).length;
+  const types=q=>({mc:'Selección',tf:'V/F',match:'Relación',order:'Orden'}[q.y]);
+  const rows=TOPICS.map(t=>{const L=[1,2,3].map(l=>cnt(q=>q.t==t.id&&q.l==l));const ty=[...new Set(QS.filter(q=>q.t==t.id).map(types))].join(', ');const ok=L.every(x=>x>=3);
+    return `<tr><td><b>${t.emoji} ${t.name}</b><br><span class="muted">${t.ae}</span></td><td>${t.ind}</td><td>${L[0]}</td><td>${L[1]}</td><td>${L[2]}</td><td><b>${L.reduce((a,b)=>a+b)}</b></td><td>${ty}</td><td>${ok?'✅':'⚠️'}</td></tr>`}).join('');
+  let gaps=0;
+  const subRows=TOPICS.map(t=>t.subs.map((k,i)=>{const n=cnt(q=>q.kk.includes(k));const ls=[1,2,3].map(l=>cnt(q=>q.kk.includes(k)&&q.l==l));if(n<2)gaps++;
+    return `<tr>${i==0?`<td rowspan="${t.subs.length}"><b>${t.emoji} ${t.name}</b></td>`:''}<td>${SUB[k]}</td><td>${n}</td><td>${ls.join(' / ')}</td><td>${n>=2?'✅':'⚠️ Sin cobertura suficiente'}</td></tr>`}).join('')).join('');
+  const orph=QS.filter(q=>q.kk.some(k=>!SUB[k]));
+  mount(`<a href="#/" class="btn ghost sm">← Inicio</a><h1 style="margin-top:1rem">✅ Auditoría de cobertura del temario</h1>
+  <p>Este panel compara el temario de la <b>Segunda Prueba (jueves 12 de noviembre de 2026)</b> con los ítems del banco, así no queda ningún indicador ni subpunto sin practicar.</p>
+  <div class="card" style="background:${gaps||orph.length?'var(--peach)':'var(--mint)'}"><h2 style="margin:0">${gaps||orph.length?'⚠️ Hay vacíos que revisar':'🎉 Cobertura completa'}</h2><p style="margin:.3rem 0 0">${QS.length} ítems · ${TOPICS.length} bloques de contenido · ${Object.keys(SUB).length} subpuntos del temario auditados · ${gaps} subpuntos con menos de 2 ítems · simulacro de ${simSpec().n} ítems (4 por tema, con niveles 1, 2, 2 y 3).</p></div>
+  <section class="card audit" style="margin-top:1rem"><h2>1. Indicadores del temario → ítems por nivel</h2><div class="scroll"><table><tr><th>Bloque</th><th>Indicador (texto del temario)</th><th>Conocer</th><th>Aplicar</th><th>Analizar</th><th>Total</th><th>Tipos de ítem</th><th></th></tr>${rows}</table></div></section>
+  <section class="card audit" style="margin-top:1rem"><h2>2. Subpuntos del temario → ítems que los evalúan</h2><div class="scroll"><table><tr><th>Bloque</th><th>Subpunto</th><th>Ítems</th><th>Niv. 1 / 2 / 3</th><th>Estado</th></tr>${subRows}</table></div></section>
+  <section class="card audit" style="margin-top:1rem"><h2>3. Correspondencia con el temario</h2><ul>
+   <li><b>Aprendizaje 1</b> (instituciones promotoras de derechos) → Derechos y deberes.</li>
+   <li><b>Aprendizaje 2</b> (Independencia de Centroamérica y Costa Rica, 1821; vida democrática, identidad local y proyección global) → Independencia y símbolos.</li>
+   <li><b>Aprendizaje 3</b> (ubicación de climas de la región) → Tiempo y clima + Climas de Costa Rica, con ejemplos de Coronado y la Región Central.</li>
+   <li><b>Aprendizaje 4</b> (condiciones que determinan el clima de la región y su influencia en la vida) → Factores y épocas + Cambio climático.</li>
+   <li><b>Efeméride</b> 12 de octubre, encuentro de culturas → bloque propio.</li></ul>
+   <p class="muted">Estructura progresiva MEP: <b>Conocer</b> (recordar y reconocer), <b>Aplicar</b> (situaciones cotidianas) y <b>Analizar</b> (resolver problemas y valorar). Cada ítem incluye retroalimentación explicativa tanto si aciertas como si fallas.</p></section>`,'Auditoría');
+}
 
-  function refreshStatus(){
-    var done = completedCount();
-    var pct = done / STATIONS;
-    trackFill.style.width = (pct*84)+'%';
-    var rocketPct = 8 + pct*84;
-    document.getElementById('rocketEl').style.left = rocketPct+'%';
-    nodes.forEach(function(n, idx){
-      if(idx < done) n.classList.add('done'); else n.classList.remove('done');
-    });
-    document.getElementById('scoreLabel').textContent = score();
-    document.getElementById('scoreTotal').textContent = TOTAL_SCORED;
-    if(done >= STATIONS){
-      var cert = document.getElementById('certificate');
-      cert.style.display='block';
-      document.getElementById('finalScore').innerHTML = score()+'<span>/'+TOTAL_SCORED+' ⭐</span>';
-    }
-  }
+/* =========================================================
+   5. ENRUTADOR Y EVENTOS
+   ========================================================= */
+function go(h){if(location.hash===h)route();else location.hash=h}
+function route(){
+  const h=location.hash||'#/';
+  if(h.startsWith('#/study/'))return viewStudy(+h.split('/')[2]);
+  if(h==='#/audit')return viewAudit();
+  if(h==='#/quiz')return S.session?viewQuiz():(location.hash='#/');
+  viewHome();
+}
+window.addEventListener('hashchange',()=>{if(location.hash!=='#/quiz')speechSynthesis&&speechSynthesis.cancel&&speechSynthesis.cancel();route()});
 
-  function markStationDone(id){
-    if(!state.completed[id]){
-      state.completed[id] = true;
-      save();
-      refreshStatus();
-    }
-  }
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+  if(a==='stage'){const t=+b.dataset.t,l=+b.dataset.l;startSession({title:`${topic(t).name} · ${LEVELS[l].n}`,qs:shuffle(QS.filter(q=>q.t===t&&q.l===l)),mode:'stage',t,l})}
+  else if(a==='sim')startSession({title:'Simulacro de la Segunda Prueba',qs:buildSim(),mode:'sim'});
+  else if(a==='review')startSession({title:'Refuerzo de errores',qs:shuffle(QS.filter(q=>S.p.prog[q.id]&&!S.p.prog[q.id].ok)),mode:'review'});
+  else if(a==='check')check();
+  else if(a==='next')next();
+  else if(a==='exit'){if(confirm('¿Quieres salir? Perderás el avance de esta práctica (los huesitos ganados se guardan).')){S.session=null;go('#/')}}
+  else if(a==='again'){const s=S.session;const o={title:s.title,mode:s.mode,t:s.t,l:s.l,qs:s.mode==='sim'?buildSim():s.mode==='review'?shuffle(QS.filter(q=>S.p.prog[q.id]&&!S.p.prog[q.id].ok)):shuffle(s.qs)};startSession(o)}
+  else if(a==='listen')speak(plain(S.session.cur.q.q)+'. '+(S.session.cur.opts?S.session.cur.opts.map((o,i)=>`Opción ${i+1}: ${plain(o.t)}`).join('. '):''));
+  else if(a==='listenStudy')speak(plain($('.study').innerHTML));
+  else if(a==='up'||a==='down'){const c=S.session.cur,i=+b.dataset.i,j=a==='up'?i-1:i+1;[c.arr[i],c.arr[j]]=[c.arr[j],c.arr[i]];$('#ord').innerHTML=ordHtml(c.arr);const nb=$('#ord').querySelector(`[data-act=${a}][data-i="${j}"]`);(nb&&!nb.disabled?nb:$('#ord').querySelector('button:not([disabled])')).focus()}
+  else if(a==='reset'){if(confirm('¿Seguro que quieres borrar tu progreso y huesitos?')){S.p={name:S.p.name,bones:0,prog:{},fs:S.p.fs,hc:S.p.hc,sims:[]};save();viewHome()}}
+  if(b.tagName==='A'&&a==='studyNow'){/* navegación normal */}
+});
+document.addEventListener('change',e=>{
+  if(e.target.closest('#qform')){
+    const c=S.session&&S.session.cur;if(!c||c.checked)return;
+    app.querySelectorAll('.opt').forEach(l=>l.classList.toggle('sel',l.querySelector('input').checked));readyCheck()}
+});
+document.addEventListener('input',e=>{
+  if(e.target.id==='petName'){S.p.name=(e.target.value||'Coco').trim()||'Coco';save()}
+});
+document.addEventListener('click',e=>{
+  const p=e.target.closest('#pet');if(!p)return;
+  for(let i=0;i<4;i++){const h=document.createElement('span');h.className='heart';h.textContent=['💕','💛','💙','✨'][i];h.style.left=(30+i*40)+'px';h.style.top='10px';h.setAttribute('aria-hidden','true');p.appendChild(h);setTimeout(()=>h.remove(),1200)}
+  const b=$('#bubble');if(b)b.textContent=TIPS[Math.floor(Math.random()*TIPS.length)];
+});
+$('#fsUp').onclick=()=>{S.p.fs=Math.min(1.5,+(S.p.fs+.1).toFixed(2));save();applyPrefs()};
+$('#fsDown').onclick=()=>{S.p.fs=Math.max(.85,+(S.p.fs-.1).toFixed(2));save();applyPrefs()};
+$('#hcBtn').onclick=()=>{S.p.hc=!S.p.hc;save();applyPrefs()};
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&S.session&&S.session.cur&&!S.session.cur.checked&&e.target.tagName!=='BUTTON'&&e.target.tagName!=='SELECT'&&location.hash==='#/quiz'){const b=$('#checkBtn');if(b&&!b.disabled){e.preventDefault();check()}}});
 
-  /* ---------- selección única (Estación 1) ---------- */
-  var stationOneStatus = {s1:false, s2:false, s3:false};
-  document.querySelectorAll('.q[data-qid]').forEach(function(qEl){
-    var qid = qEl.getAttribute('data-qid');
-    var answer = qEl.getAttribute('data-answer');
-    var opts = qEl.querySelectorAll('.opt');
-    var feedback = qEl.querySelector('.feedback');
-    var locked = false;
-    var firstAttemptUsed = false;
-
-    // restore
-    if(state.correctFirstTry[qid] !== undefined || state.completed['s1_'+qid]){
-      // already answered correctly previously — lock and show
-      opts.forEach(function(o){
-        if(o.getAttribute('data-idx')===answer){ o.classList.add('correct'); }
-        o.classList.add('locked');
-      });
-      feedback.textContent='¡Correcto! Coordenadas confirmadas.';
-      feedback.classList.add('correct');
-      locked = true;
-      stationOneStatus[qid] = true;
-    }
-
-    opts.forEach(function(opt){
-      opt.addEventListener('click', function(){
-        if(locked) return;
-        var idx = opt.getAttribute('data-idx');
-        if(idx === answer){
-          opt.classList.add('correct');
-          opts.forEach(function(o){ o.classList.add('locked'); });
-          feedback.textContent = '¡Correcto! Coordenadas confirmadas.';
-          feedback.className = 'feedback correct';
-          locked = true;
-          if(!firstAttemptUsed){
-            state.correctFirstTry[qid] = true;
-          }
-          stationOneStatus[qid] = true;
-          save();
-          checkStationOne();
-          refreshStatus();
-        } else {
-          firstAttemptUsed = true;
-          opt.classList.add('wrong');
-          feedback.textContent = 'Señal incorrecta. Inténtalo de nuevo, explorador.';
-          feedback.className = 'feedback wrong';
-          setTimeout(function(){ opt.classList.remove('wrong'); }, 500);
-        }
-      });
-    });
-  });
-  function checkStationOne(){
-    if(stationOneStatus.s1 && stationOneStatus.s2 && stationOneStatus.s3){
-      markStationDone('station1');
-    }
-  }
-  checkStationOne();
-
-  /* ---------- cabeceras (Estación 2) ---------- */
-  var fillStatus = {};
-  var fillRows = document.querySelectorAll('.fillrow[data-fid]');
-  fillRows.forEach(function(row){
-    var fid = row.getAttribute('data-fid');
-    var answers = row.getAttribute('data-answers').split('|');
-    var input = row.querySelector('input[type=text]');
-    var btn = row.querySelector('.check-btn');
-    fillStatus[fid] = false;
-    var firstAttemptUsed = false;
-
-    if(state.completed['fill_'+fid]){
-      input.disabled = true;
-      input.value = capitalize(answers[0]);
-      row.classList.add('correct');
-      btn.disabled = true;
-      btn.textContent = '✓ Listo';
-      fillStatus[fid] = true;
-    }
-
-    function normalize(str){
-      return str.trim().toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-    }
-    function capitalize(str){
-      return str.replace(/\b\w/g, function(c){return c.toUpperCase();});
-    }
-    function attempt(){
-      var val = normalize(input.value);
-      var ok = answers.some(function(a){ return normalize(a)===val; });
-      if(ok){
-        row.classList.add('correct');
-        row.classList.remove('wrong');
-        input.disabled = true;
-        btn.disabled = true;
-        btn.textContent = '✓ Listo';
-        if(!firstAttemptUsed){ state.correctFirstTry[fid] = true; }
-        fillStatus[fid] = true;
-        state.completed['fill_'+fid] = true;
-        save();
-        checkStationTwo();
-        refreshStatus();
-      } else {
-        firstAttemptUsed = true;
-        row.classList.add('wrong');
-        setTimeout(function(){ row.classList.remove('wrong'); }, 500);
-      }
-    }
-    btn.addEventListener('click', attempt);
-    input.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); attempt(); } });
-  });
-  function checkStationTwo(){
-    var all = Object.keys(fillStatus).every(function(k){ return fillStatus[k]; });
-    if(all) markStationDone('station2');
-  }
-  checkStationTwo();
-
-  /* ---------- laboratorio libre (Estación 3) — sin puntaje, se marca al escribir en las 3 ---------- */
-  (function(){
-    var ids = ['j1','j2','j3'];
-    var areas = {};
-    ids.forEach(function(id){
-      var ta = document.querySelector('textarea[data-jid="'+id+'"]');
-      areas[id]=ta;
-      var saved = state['journal_'+id];
-      if(saved) ta.value = saved;
-      ta.addEventListener('input', function(){
-        state['journal_'+id] = ta.value;
-        save();
-        checkStation3();
-      });
-    });
-    document.querySelectorAll('.reveal-btn').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var target = document.getElementById(btn.getAttribute('data-target'));
-        target.classList.toggle('show');
-        btn.textContent = target.classList.contains('show') ? 'Ocultar respuesta sugerida' : 'Ver respuesta sugerida';
-      });
-    });
-    function checkStation3(){
-      var allFilled = ids.every(function(id){ return areas[id].value.trim().length>0; });
-      if(allFilled) markStationDone('station3');
-    }
-    checkStation3();
-  })();
-
-  /* ---------- pareo (Estación 4) ---------- */
-  var matchChecked = false;
-  document.getElementById('checkMatches').addEventListener('click', function(){
-    var items = document.querySelectorAll('.match-item[data-mid]');
-    var allCorrect = true;
-    items.forEach(function(item){
-      var mid = item.getAttribute('data-mid');
-      var answer = item.getAttribute('data-answer');
-      var select = item.querySelector('select');
-      var val = select.value;
-      if(val === answer){
-        item.classList.add('correct');
-        item.classList.remove('wrong');
-        if(!state.correctFirstTry['match_'+mid] && !matchChecked){
-          state.correctFirstTry['match_'+mid] = true;
-        }
-      } else {
-        item.classList.add('wrong');
-        item.classList.remove('correct');
-        allCorrect = false;
-      }
-    });
-    var fb = document.getElementById('matchFeedback');
-    if(allCorrect){
-      fb.textContent = '¡Pareo completo! Contacto cultural establecido.';
-      fb.className = 'feedback correct';
-      markStationDone('station4');
-    } else {
-      fb.textContent = 'Algunas coordenadas no coinciden. Ajusta y vuelve a verificar.';
-      fb.className = 'feedback wrong';
-    }
-    matchChecked = true;
-    save();
-    refreshStatus();
-  });
-
-  /* ---------- archivo de tradiciones (Estación 5) — sin puntaje ---------- */
-  (function(){
-    var ids = ['j4','j5'];
-    var areas = {};
-    ids.forEach(function(id){
-      var ta = document.querySelector('textarea[data-jid="'+id+'"]');
-      areas[id]=ta;
-      var saved = state['journal_'+id];
-      if(saved) ta.value = saved;
-      ta.addEventListener('input', function(){
-        state['journal_'+id] = ta.value;
-        save();
-        checkStation5();
-      });
-    });
-    function checkStation5(){
-      var allFilled = ids.every(function(id){ return areas[id].value.trim().length>0; });
-      if(allFilled) markStationDone('station5');
-    }
-    checkStation5();
-  })();
-
-  /* ---------- matriz final (Estación 6) — sin puntaje ---------- */
-  (function(){
-    var ids = ['j6','j7'];
-    var areas = {};
-    ids.forEach(function(id){
-      var ta = document.querySelector('textarea[data-jid="'+id+'"]');
-      areas[id]=ta;
-      var saved = state['journal_'+id];
-      if(saved) ta.value = saved;
-      ta.addEventListener('input', function(){
-        state['journal_'+id] = ta.value;
-        save();
-        checkStation6();
-      });
-    });
-    function checkStation6(){
-      var allFilled = ids.every(function(id){ return areas[id].value.trim().length>0; });
-      if(allFilled) markStationDone('station6');
-    }
-    checkStation6();
-  })();
-
-  /* ---------- reset ---------- */
-  document.getElementById('resetBtn').addEventListener('click', function(){
-    if(confirm('¿Reiniciar toda la misión? Se borrará tu progreso guardado.')){
-      localStorage.removeItem(STORAGE_KEY);
-      location.reload();
-    }
-  });
-
-  refreshStatus();
-})();
+/* Revisión de integridad al cargar (consola) */
+(()=>{QS.forEach(q=>{if(q.y==='mc'&&q.o.length<2)console.warn('mc incompleto',q.id);if(!topic(q.t))console.warn('tema',q.id);q.kk.forEach(k=>{if(!SUB[k])console.warn('subpunto desconocido',q.id,k)})})})();
+applyPrefs();route();
 </script>
 </body>
 </html>
